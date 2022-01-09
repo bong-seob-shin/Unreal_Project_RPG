@@ -4,6 +4,7 @@
 #include "AuroraCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AAuroraCharacter::AAuroraCharacter()
@@ -12,23 +13,28 @@ AAuroraCharacter::AAuroraCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Add SpringArm Component
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
+	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 400.0f;
 	SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
 	SpringArm->bUsePawnControlRotation = true;
 
 	// Add Camera Component
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
-	Camera->SetupAttachment(SpringArm);
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
+	// Load SkeletalMesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM(TEXT("SkeletalMesh'/Game/IceLandWorld/ParagonAurora/Characters/Heroes/Aurora/Meshes/Aurora.Aurora'"));
 	if (SM.Succeeded())
 	{
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+	GetCharacterMovement()->bIgnoreBaseRotation = true;
 }
 
 // Called when the game starts or when spawned
@@ -55,24 +61,32 @@ void AAuroraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AAuroraCharacter::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AAuroraCharacter::LookUp);
 
-	PlayerInputComponent->BindAction(TEXT("Run"),EInputEvent::IE_Pressed, this, &AAuroraCharacter::PressedRun);
-	PlayerInputComponent->BindAction(TEXT("Run"),EInputEvent::IE_Released, this, &AAuroraCharacter::ReleasedRun);
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AAuroraCharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AAuroraCharacter::StopJumping);
+	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Pressed, this, &AAuroraCharacter::BeginSprint);
+	PlayerInputComponent->BindAction(TEXT("Sprint"),IE_Released, this, &AAuroraCharacter::EndSprint);
+	PlayerInputComponent->BindAction(TEXT("Dodge"), IE_Pressed, this, &AAuroraCharacter::BeginDodge);
+	PlayerInputComponent->BindAction(TEXT("Dodge"), IE_Released, this, &AAuroraCharacter::EndDodge);
 }
 
 void AAuroraCharacter::MoveForward(float Value)
 {
-	if ((Controller) && (Value != 0.0f))
+	if ((Controller != nullptr) && (Value != 0.0f))
 	{
-		FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value * CurrentSpeed);
 	}
 }
 
 void AAuroraCharacter::MoveRight(float Value)
 {
-	if ((Controller) && (Value != 0.0f))
+	if ((Controller != nullptr) && (Value != 0.0f))
 	{
-		FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value * CurrentSpeed);
 	}
 }
@@ -93,15 +107,23 @@ void AAuroraCharacter::LookUp(float Value)
 	}
 }
 
-void AAuroraCharacter::PressedRun()
+void AAuroraCharacter::BeginSprint()
 {
-	//MovementComponent->MaxSpeed = 100.0f;
-	CurrentSpeed = 500.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 1000.0f;
 }
 
-void AAuroraCharacter::ReleasedRun()
+void AAuroraCharacter::EndSprint()
 {
-	//MovementComponent->MaxSpeed = 20.0f;
-	CurrentSpeed = 1.0f;
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+}
+
+void AAuroraCharacter::BeginDodge()
+{
+	Crouch();
+}
+
+void AAuroraCharacter::EndDodge()
+{
+	UnCrouch();
 }
 

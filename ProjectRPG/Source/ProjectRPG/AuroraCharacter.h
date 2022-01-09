@@ -30,8 +30,12 @@ public:
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
-	void PressedRun();
-	void ReleasedRun();
+
+protected:
+	void BeginSprint();
+	void EndSprint();
+	void BeginDodge();
+	void EndDodge();
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = true))
