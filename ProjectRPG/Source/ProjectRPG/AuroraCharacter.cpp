@@ -50,5 +50,58 @@ void AAuroraCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AAuroraCharacter::MoveForward);
+	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AAuroraCharacter::MoveRight);
+	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AAuroraCharacter::Turn);
+	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &AAuroraCharacter::LookUp);
+
+	PlayerInputComponent->BindAction(TEXT("Run"),EInputEvent::IE_Pressed, this, &AAuroraCharacter::PressedRun);
+	PlayerInputComponent->BindAction(TEXT("Run"),EInputEvent::IE_Released, this, &AAuroraCharacter::ReleasedRun);
+}
+
+void AAuroraCharacter::MoveForward(float Value)
+{
+	if ((Controller) && (Value != 0.0f))
+	{
+		FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::X);
+		AddMovementInput(Direction, Value * CurrentSpeed);
+	}
+}
+
+void AAuroraCharacter::MoveRight(float Value)
+{
+	if ((Controller) && (Value != 0.0f))
+	{
+		FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetScaledAxis(EAxis::Y);
+		AddMovementInput(Direction, Value * CurrentSpeed);
+	}
+}
+
+void AAuroraCharacter::Turn(float Value)
+{
+	if ((Controller) && (Value != 0.0f))
+	{
+		AddControllerYawInput(Value);
+	}
+}
+
+void AAuroraCharacter::LookUp(float Value)
+{
+	if ((Controller) && (Value != 0.0f))
+	{
+		AddControllerPitchInput(Value);
+	}
+}
+
+void AAuroraCharacter::PressedRun()
+{
+	//MovementComponent->MaxSpeed = 100.0f;
+	CurrentSpeed = 500.0f;
+}
+
+void AAuroraCharacter::ReleasedRun()
+{
+	//MovementComponent->MaxSpeed = 20.0f;
+	CurrentSpeed = 1.0f;
 }
 
