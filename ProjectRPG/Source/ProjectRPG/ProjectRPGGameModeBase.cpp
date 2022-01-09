@@ -2,4 +2,9 @@
 
 
 #include "ProjectRPGGameModeBase.h"
+#include "AuroraCharacter.h"
 
+AProjectRPGGameModeBase::AProjectRPGGameModeBase()
+{
+	DefaultPawnClass = AAuroraCharacter::StaticClass();
+}
