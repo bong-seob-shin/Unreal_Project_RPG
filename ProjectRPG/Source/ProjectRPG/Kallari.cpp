@@ -55,37 +55,6 @@ void AKallari::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void AKallari::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AKallari::Jump);
 
-	PlayerInputComponent->BindAxis(TEXT("UpDown"), this, &AKallari::Updown);
-	PlayerInputComponent->BindAxis(TEXT("LeftRight"), this, &AKallari::LeftRight);
-	PlayerInputComponent->BindAxis(TEXT("Horizontal"), this, &AKallari::Horizontal);
-	PlayerInputComponent->BindAxis(TEXT("Vertical"), this, &AKallari::Vertical);
-
-}
-
-void AKallari::Updown(float Value)
-{
-	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), Value);
-}
-
-void AKallari::LeftRight(float Value)
-{
-	AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), Value);
-}
-
-void AKallari::Horizontal(float Value)
-{
-	AddControllerYawInput(Value);
-}
-
-void AKallari::Vertical(float Value)
-{
-	AddControllerPitchInput(Value);
-}
 
