@@ -15,6 +15,8 @@ class PROJECTRPG_API UAuroraAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
+	UAuroraAnimInstance();
+	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 private:
@@ -23,4 +25,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float Direction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsJumping;
+
+	UPROPERTY()
+	ACharacter* Character;
 };

@@ -2,15 +2,34 @@
 
 
 #include "AuroraAnimInstance.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
-void UAuroraAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+UAuroraAnimInstance::UAuroraAnimInstance()
 {
-	Super::NativeUpdateAnimation(DeltaSeconds);
+	IsJumping = false;
+}
+
+void UAuroraAnimInstance::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
 
 	APawn* Pawn = TryGetPawnOwner();
 	if (IsValid(Pawn))
 	{
-		MoveSpeed = Pawn->GetVelocity().Size();
-		Direction = CalculateDirection(Pawn->GetVelocity(), Pawn->GetActorRotation());
+		Character = Cast<ACharacter>(Pawn);
+	}
+}
+
+void UAuroraAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
+{
+	Super::NativeUpdateAnimation(DeltaSeconds);
+	
+	if (Character)
+	{
+		MoveSpeed = Character->GetVelocity().Size();
+		Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
+		
+		IsJumping = Character->GetCharacterMovement()->IsFalling();
 	}
 }
