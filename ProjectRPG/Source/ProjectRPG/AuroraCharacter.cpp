@@ -35,6 +35,13 @@ AAuroraCharacter::AAuroraCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->bIgnoreBaseRotation = true;
+
+	// Load Animation Blueprint
+	static ConstructorHelpers::FClassFinder<UAnimInstance> ABP(TEXT("AnimBlueprint'/Game/IceLandWorld/ABP_AruroraAnim.ABP_AruroraAnim_C'"));
+	if (ABP.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(ABP.Class);
+	}
 }
 
 // Called when the game starts or when spawned
