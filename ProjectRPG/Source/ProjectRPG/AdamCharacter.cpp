@@ -16,7 +16,21 @@ AAdamCharacter::AAdamCharacter()
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SpringArm->TargetArmLength = 600.0f;
-	SpringArm->SetRelativeRotation(FRotator(-40.0f, 0.0f, 0.0f));
+	//SpringArm->SetRelativeRotation(FRotator(-40.0f, 0.0f, 0.0f));
+	SpringArm->SetRelativeRotation(FRotator(FRotator::ZeroRotator));
+	SpringArm->bUsePawnControlRotation = true;
+	SpringArm->bInheritPitch = true;
+	SpringArm->bInheritRoll = true;
+	SpringArm->bInheritYaw = true;
+	SpringArm->bDoCollisionTest = true;
+	SpringArm->bEnableCameraLag = true;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // 회전 속도?
+	
+
+
+	
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ADAM(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/Character/SK_AdamAdventurer.SK_AdamAdventurer"));
 	if (SK_ADAM.Succeeded())
@@ -26,7 +40,7 @@ AAdamCharacter::AAdamCharacter()
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> ADAM_ANIM(TEXT("/Game/PalaceWorld/Blueprints/AdamAnimBP.AdamAnimBP"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> ADAM_ANIM(TEXT("/Game/PalaceWorld/Blueprints/AdamAnimBP.AdamAnimBP_C"));
 	if (ADAM_ANIM.Succeeded())
 	{
 		GetMesh()->SetAnimInstanceClass(ADAM_ANIM.Class);

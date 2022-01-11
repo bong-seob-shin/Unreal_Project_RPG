@@ -14,7 +14,8 @@ class PROJECTRPG_API AAdamPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
-
+public:
+	AAdamPlayerController();
 public:
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* aPawn) override;
@@ -30,4 +31,7 @@ private:
 	void StopJumping();
 	void LookUp(float NewAxisValue);
 	void Turn(float NewAxisValue);
+
+private:
+	FVector FixedFwdVec; // 컨트롤 로테이션 pitch가 제한각도와 가까워 졌을 때 그 방향으로 진행되어 느려지는 플레이어 이동 방지를 위한 벡터
 };

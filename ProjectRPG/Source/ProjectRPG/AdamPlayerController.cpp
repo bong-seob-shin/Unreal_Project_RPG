@@ -2,6 +2,16 @@
 
 
 #include "AdamPlayerController.h"
+#include "AdamPlayerCameraManager.h"
+
+DECLARE_LOG_CATEGORY_EXTERN(PalaceWorld, Log, All);
+DEFINE_LOG_CATEGORY(PalaceWorld);
+
+AAdamPlayerController::AAdamPlayerController()
+{
+	PlayerCameraManagerClass = AAdamPlayerCameraManager::StaticClass();
+}
+
 
 void AAdamPlayerController::PostInitializeComponents()
 {
@@ -17,6 +27,9 @@ void AAdamPlayerController::BeginPlay()
 	Super::BeginPlay();
 	FInputModeGameOnly InputMode;  // UI 배제하고 게임에만 입력 전달
 	SetInputMode(InputMode);
+	//PlayerCameraManager->ViewPitchMax = 0.0f;
+	//PlayerCameraManager->ViewPitchMin = -70.0f;
+
 }
 
 void AAdamPlayerController::SetupInputComponent()
@@ -38,8 +51,24 @@ void AAdamPlayerController::MoveFB(float NewAxisValue)
 	ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter && NewAxisValue != 0.0f)
 	{
-		MyCharacter->AddMovementInput(MyCharacter->GetActorForwardVector(), NewAxisValue);
+		// 카메라 위에서 볼 때 진행방향으로 이동하면 느려지는거 수정중
+		//float PlayerStdAngle = 360.0f - GetControlRotation().Pitch; // 플레이어 컨트롤 로테이션의 pitch 값과 카메라 각도 제한 ViewPitchMin 값 비교용 변수
+		//float PostivePitchLimit = -1.0f * PlayerCameraManager->ViewPitchMin;
+
+		////UE_LOG(PalaceWorld, Warning, TEXT("Pitch : %f, Manager: %f"), PlayerStdAngle, PostivePitchLimit);
+
+		//if (PostivePitchLimit - PlayerStdAngle > 20.0f)
+		//{
+		//	//UE_LOG(PalaceWorld, Warning, TEXT("fixed : %f"), PostivePitchLimit - PlayerStdAngle);
+		//	FixedFwdVec = FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X);
+		//	//MyCharacter->AddMovementInput(MyCharacter->GetActorForwardVector(), NewAxisValue);
+		//	
+		//}
+		//MyCharacter->AddMovementInput(FixedFwdVec, NewAxisValue);
+		
+		MyCharacter->AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
 	}
+
 
 }
 
@@ -48,7 +77,7 @@ void AAdamPlayerController::MoveLR(float NewAxisValue)
 	ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter && NewAxisValue != 0.0f)
 	{
-		MyCharacter->AddMovementInput(MyCharacter->GetActorRightVector(), NewAxisValue);
+		MyCharacter->AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
 	}
 }
 
