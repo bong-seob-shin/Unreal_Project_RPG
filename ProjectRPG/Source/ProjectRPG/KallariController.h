@@ -9,30 +9,33 @@
 /**
  * 
  */
+
 UCLASS()
 class PROJECTRPG_API AKallariController : public APlayerController
 {
 	GENERATED_BODY()
+public:
 
 	AKallariController();
 
-private:
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool blnterrupted);
 
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
+private:
 
-	UFUNCTION()
 	void Updown(float Value);
-
-	UFUNCTION()
 	void LeftRight(float Value);
-
-	UFUNCTION()
 	void Horizontal(float Value);
-
-	UFUNCTION()
 	void Vertical(float Value);
 
-	UFUNCTION()
 	void Jump();
+	void Attack();
+
+
+private:
+
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess=true))
+	bool bIsAttacking = false;
 };

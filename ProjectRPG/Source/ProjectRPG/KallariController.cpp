@@ -8,8 +8,6 @@
 AKallariController::AKallariController()
 {
 	PlayerCameraManagerClass = AKallariPlayerCameraManager::StaticClass();
-
-
 }
 
 void AKallariController::SetupInputComponent()
@@ -17,6 +15,8 @@ void AKallariController::SetupInputComponent()
 	Super::SetupInputComponent();
 	
 	InputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AKallariController::Jump);
+	InputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AKallariController::Attack);
+
 
 	InputComponent->BindAxis(TEXT("UpDown"), this, &AKallariController::Updown);
 	InputComponent->BindAxis(TEXT("LeftRight"), this, &AKallariController::LeftRight);
@@ -58,5 +58,30 @@ void AKallariController::Jump()
 	if (MyCharacter != nullptr)
 	{
 		MyCharacter->Jump();
+	}
+}
+
+void AKallariController::Attack()
+{
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+	if (MyCharacter != nullptr)
+	{
+		bIsAttacking = MyCharacter->Attack(bIsAttacking);
+	}
+
+}
+
+
+void AKallariController::OnAttackMontageEnded(UAnimMontage* Montage, bool blnterrupted)
+{
+	bIsAttacking = false;
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->AttackEnd();
 	}
 }
