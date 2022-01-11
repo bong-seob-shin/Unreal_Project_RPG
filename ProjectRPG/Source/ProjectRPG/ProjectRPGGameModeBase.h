@@ -14,6 +14,4 @@ class PROJECTRPG_API AProjectRPGGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
-	AProjectRPGGameModeBase();
 };
