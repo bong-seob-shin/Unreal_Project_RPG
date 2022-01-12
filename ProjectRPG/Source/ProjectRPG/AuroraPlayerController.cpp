@@ -5,10 +5,22 @@
 #include "AuroraPlayerCameraManager.h"
 #include "AuroraCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AuroraAnimInstance.h"
 
 AAuroraPlayerController::AAuroraPlayerController()
 {
 	PlayerCameraManagerClass = AAuroraPlayerCameraManager::StaticClass();
+
+	IsAttackingMelee = false;
+
+	MaxCombo = 4;
+	AttackMeleeEndComboState();
+}
+
+void AAuroraPlayerController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
 }
 
 void AAuroraPlayerController::SetupInputComponent()
@@ -24,6 +36,8 @@ void AAuroraPlayerController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AAuroraPlayerController::StopJumping);
 	InputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AAuroraPlayerController::BeginRun);
 	InputComponent->BindAction(TEXT("Run"), IE_Released, this, &AAuroraPlayerController::EndRun);
+
+	InputComponent->BindAction(TEXT("AttackMelee"), IE_Pressed, this, &AAuroraPlayerController::AttackMelee);
 }
 
 void AAuroraPlayerController::BeginPlay()
@@ -32,10 +46,21 @@ void AAuroraPlayerController::BeginPlay()
 
 	APawn* const aPawn = GetPawn();
 	AAuroraCharacter* AuroraCharacter = Cast<AAuroraCharacter>(aPawn);
-	if (AuroraCharacter)
-	{
-		AuroraCharacter->GetCharacterMovement()->MaxWalkSpeed = 400.0f;
-	}
+	if (AuroraCharacter == nullptr) return;
+	
+	AuroraCharacter->GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+	AuroraAnimInstance = Cast<UAuroraAnimInstance>(AuroraCharacter->GetMesh()->GetAnimInstance());
+	AuroraAnimInstance->OnMontageEnded.AddDynamic(this, &AAuroraPlayerController::OnAttackMeleeMontageEnded);
+
+	AuroraAnimInstance->OnNextAttackMeleeCheck.AddLambda([this]()-> void {
+		canNextCombo = false;
+
+		if (IsComboInputOn)
+		{
+			AttackMeleeStartComboState();
+			AuroraAnimInstance->JumpToAttackMeleeMontageSection(CurrentCombo);
+		}
+	});
 }
 
 void AAuroraPlayerController::MoveForward(float Value)
@@ -118,4 +143,43 @@ void AAuroraPlayerController::EndRun()
 	{
 		AuroraCharacter->GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	}
+}
+
+void AAuroraPlayerController::AttackMelee()
+{
+	if (IsAttackingMelee)
+	{
+		if (canNextCombo)
+		{
+			IsComboInputOn = true;
+		}
+	}
+	else
+	{
+		AttackMeleeStartComboState();
+		AuroraAnimInstance->PlayAttackMeleeMontage();
+		AuroraAnimInstance->JumpToAttackMeleeMontageSection(CurrentCombo);
+		IsAttackingMelee = true;
+	}
+}
+
+void AAuroraPlayerController::OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttackingMelee = false;
+	AttackMeleeEndComboState();
+}
+
+void AAuroraPlayerController::AttackMeleeStartComboState()
+{
+	canNextCombo = true;
+	IsComboInputOn = false;
+	//CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, MaxCombo);
+	CurrentCombo++;
+}
+
+void AAuroraPlayerController::AttackMeleeEndComboState()
+{
+	IsComboInputOn = false;
+	canNextCombo = false;
+	CurrentCombo = 0;
 }

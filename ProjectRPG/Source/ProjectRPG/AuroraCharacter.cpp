@@ -33,6 +33,7 @@ AAuroraCharacter::AAuroraCharacter()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
 
 	// Load Animation Blueprint
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	static ConstructorHelpers::FClassFinder<UAnimInstance> ABP(TEXT("AnimBlueprint'/Game/IceLandWorld/ABP_AruroraAnim.ABP_AruroraAnim_C'"));
 	if (ABP.Succeeded())
 	{

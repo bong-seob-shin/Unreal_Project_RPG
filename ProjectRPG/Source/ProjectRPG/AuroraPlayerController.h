@@ -17,6 +17,9 @@ class PROJECTRPG_API AAuroraPlayerController : public APlayerController
 public:
 	AAuroraPlayerController();
 
+public:
+	virtual void PostInitializeComponents() override;
+
 private:
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
@@ -30,4 +33,31 @@ private:
 	void StopJumping();
 	void BeginRun();
 	void EndRun();
+
+	void AttackMelee();
+
+	UFUNCTION()
+	void OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	void AttackMeleeStartComboState();
+	void AttackMeleeEndComboState();
+
+private:
+	UPROPERTY(VisibleAnywhere, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool IsAttackingMelee;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool canNextCombo;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool IsComboInputOn;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	int32 CurrentCombo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	int32 MaxCombo;
+
+	UPROPERTY()
+	class UAuroraAnimInstance* AuroraAnimInstance;
 };
