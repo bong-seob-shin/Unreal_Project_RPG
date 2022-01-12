@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+//#include "EngineMinimal.h"
+#include "PalaceWorld.h"
 #include "GameFramework/PlayerController.h"
 #include "AdamPlayerController.generated.h"
 
@@ -31,7 +32,15 @@ private:
 	void StopJumping();
 	void LookUp(float NewAxisValue);
 	void Turn(float NewAxisValue);
+	void Sprint();
+	void StopSprinting();
+	void Attack(); // 기본공격. 나중에 무기 따라 다르게
 
+	
 private:
-	FVector FixedFwdVec; // 컨트롤 로테이션 pitch가 제한각도와 가까워 졌을 때 그 방향으로 진행되어 느려지는 플레이어 이동 방지를 위한 벡터
+	class AAdamCharacter* MyCharacter;
+public:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsAttacking;
+
 };

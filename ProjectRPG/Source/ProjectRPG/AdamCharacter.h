@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+//#include "EngineMinimal.h"
+#include "PalaceWorld.h"
 #include "GameFramework/Character.h"
 #include "AdamCharacter.generated.h"
 
@@ -35,8 +36,26 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
 
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	// Ä® °ø°Ý ÄÞº¸
+	void AttackStartComboState();
+	void AttackEndComboState();
+
+public:
+	// Ä® °ø°Ý ÄÞº¸ º¯¼öµé
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bCanNextCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsComboInputOn;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	int32 CurrentCombo;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	int32 MaxCombo;
 
 
-
+	UPROPERTY()
+	class UAdamAnimInstance* AdamAnim;
 
 };

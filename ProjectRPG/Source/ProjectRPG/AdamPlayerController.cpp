@@ -3,23 +3,28 @@
 
 #include "AdamPlayerController.h"
 #include "AdamPlayerCameraManager.h"
+#include "AdamAnimInstance.h"
+#include "AdamCharacter.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(PalaceWorld, Log, All);
-DEFINE_LOG_CATEGORY(PalaceWorld);
 
 AAdamPlayerController::AAdamPlayerController()
 {
 	PlayerCameraManagerClass = AAdamPlayerCameraManager::StaticClass();
+	bIsAttacking = false;
 }
 
 
 void AAdamPlayerController::PostInitializeComponents()
 {
-	Super::PostInitializeComponents(); // 폰과 플레이어 컨트롤러가 생성되는 시점
+	Super::PostInitializeComponents(); // 폰과 플레이어 컨트롤러가 생성되는 시점 확인 가능
+
 }
-void AAdamPlayerController::OnPossess(APawn* aPawn)
+void AAdamPlayerController::OnPossess(APawn* aPawn) 
 {
-	Super::OnPossess(aPawn);
+	Super::OnPossess(aPawn); // 빙의를 진행하는 시점 
+	MyCharacter = Cast<AAdamCharacter>(GetCharacter());
+	
+	
 }
 
 void AAdamPlayerController::BeginPlay()
@@ -27,8 +32,6 @@ void AAdamPlayerController::BeginPlay()
 	Super::BeginPlay();
 	FInputModeGameOnly InputMode;  // UI 배제하고 게임에만 입력 전달
 	SetInputMode(InputMode);
-	//PlayerCameraManager->ViewPitchMax = 0.0f;
-	//PlayerCameraManager->ViewPitchMin = -70.0f;
 
 }
 
@@ -44,29 +47,21 @@ void AAdamPlayerController::SetupInputComponent()
 
 	InputComponent->BindAxis(TEXT("LookUp"),this, &AAdamPlayerController::LookUp);
 	InputComponent->BindAxis(TEXT("Turn"), this, &AAdamPlayerController::Turn);
+
+	InputComponent->BindAction(TEXT("Sprint"), IE_Pressed, this, &AAdamPlayerController::Sprint);
+	InputComponent->BindAction(TEXT("Sprint"), IE_Released, this, &AAdamPlayerController::StopSprinting);
+
+	InputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AAdamPlayerController::Attack);
+
+
 }
 
 void AAdamPlayerController::MoveFB(float NewAxisValue)
 {
-	ACharacter* const MyCharacter = GetCharacter();
+	//ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter && NewAxisValue != 0.0f)
 	{
-		// 카메라 위에서 볼 때 진행방향으로 이동하면 느려지는거 수정중
-		//float PlayerStdAngle = 360.0f - GetControlRotation().Pitch; // 플레이어 컨트롤 로테이션의 pitch 값과 카메라 각도 제한 ViewPitchMin 값 비교용 변수
-		//float PostivePitchLimit = -1.0f * PlayerCameraManager->ViewPitchMin;
-
-		////UE_LOG(PalaceWorld, Warning, TEXT("Pitch : %f, Manager: %f"), PlayerStdAngle, PostivePitchLimit);
-
-		//if (PostivePitchLimit - PlayerStdAngle > 20.0f)
-		//{
-		//	//UE_LOG(PalaceWorld, Warning, TEXT("fixed : %f"), PostivePitchLimit - PlayerStdAngle);
-		//	FixedFwdVec = FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X);
-		//	//MyCharacter->AddMovementInput(MyCharacter->GetActorForwardVector(), NewAxisValue);
-		//	
-		//}
-		//MyCharacter->AddMovementInput(FixedFwdVec, NewAxisValue);
-		
-		MyCharacter->AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
+		MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), NewAxisValue);
 	}
 
 
@@ -74,16 +69,16 @@ void AAdamPlayerController::MoveFB(float NewAxisValue)
 
 void AAdamPlayerController::MoveLR(float NewAxisValue)
 {
-	ACharacter* const MyCharacter = GetCharacter();
+	//ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter && NewAxisValue != 0.0f)
 	{
-		MyCharacter->AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+		MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), NewAxisValue);
 	}
 }
 
 void AAdamPlayerController::Jump()
 {
-	ACharacter* const MyCharacter = GetCharacter();
+	//ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter)
 	{
 		MyCharacter->Jump();
@@ -92,7 +87,7 @@ void AAdamPlayerController::Jump()
 
 void AAdamPlayerController::StopJumping()
 {
-	ACharacter* const MyCharacter = GetCharacter();
+	//ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter)
 	{
 		MyCharacter->StopJumping();
@@ -101,7 +96,7 @@ void AAdamPlayerController::StopJumping()
 
 void AAdamPlayerController::LookUp(float NewAxisValue)
 {
-	ACharacter* const MyCharacter = GetCharacter();
+	//ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter)
 	{
 		MyCharacter->AddControllerPitchInput(NewAxisValue);
@@ -111,9 +106,50 @@ void AAdamPlayerController::LookUp(float NewAxisValue)
 
 void AAdamPlayerController::Turn(float NewAxisValue)
 {
-	ACharacter* const MyCharacter = GetCharacter();
+	//ACharacter* const MyCharacter = GetCharacter();
 	if (MyCharacter)
 	{
 		MyCharacter->AddControllerYawInput(NewAxisValue);
 	}
 }
+
+void AAdamPlayerController::Sprint()
+{
+	//ACharacter* const MyCharacter = GetCharacter();
+	if (MyCharacter)
+	{
+		MyCharacter->GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	}
+}
+
+void AAdamPlayerController::StopSprinting()
+{
+	//ACharacter* const MyCharacter = GetCharacter();
+	if (MyCharacter)
+	{
+		MyCharacter->GetCharacterMovement()->MaxWalkSpeed = 450.0f;
+	}
+}
+
+void AAdamPlayerController::Attack()
+{
+	if (bIsAttacking)
+	{
+		if (FMath::IsWithinInclusive<int32>(MyCharacter->CurrentCombo, 1, MyCharacter->MaxCombo))
+		{
+			if (MyCharacter->bCanNextCombo)
+				MyCharacter->bIsComboInputOn = true;
+		}
+	}
+	else
+	{
+		if (MyCharacter->CurrentCombo == 0) {
+			MyCharacter->AttackStartComboState();
+			MyCharacter->AdamAnim->PlayAttackMontage();
+			MyCharacter->AdamAnim->JumpToAttackMontageSection(MyCharacter->CurrentCombo);
+			bIsAttacking = true;
+		}
+	}
+}
+
+
