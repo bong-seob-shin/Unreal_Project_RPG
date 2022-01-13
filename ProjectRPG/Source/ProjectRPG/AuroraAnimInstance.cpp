@@ -8,6 +8,7 @@
 UAuroraAnimInstance::UAuroraAnimInstance()
 {
 	IsJumping = false;
+	IsDead = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> AttackMelee_Montage(TEXT("AnimMontage'/Game/IceLandWorld/AM_AttackMelee.AM_AttackMelee'"));
 	if (AttackMelee_Montage.Succeeded())
@@ -16,33 +17,25 @@ UAuroraAnimInstance::UAuroraAnimInstance()
 	}
 }
 
-void UAuroraAnimInstance::NativeBeginPlay()
-{
-	Super::NativeBeginPlay();
-
-	APawn* Pawn = TryGetPawnOwner();
-	if (IsValid(Pawn))
-	{
-		Character = Cast<ACharacter>(Pawn);
-	}
-}
-
 void UAuroraAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-	
-	if (Character)
+
+	auto Pawn = TryGetPawnOwner();
+	if (IsValid(Pawn))
 	{
-		MoveSpeed = Character->GetVelocity().Size();
-		//Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
-		IsJumping = Character->GetCharacterMovement()->IsFalling();
-		if (!IsJumping)
+		MoveSpeed = Pawn->GetVelocity().Size();
+
+		auto Character = Cast<ACharacter>(Pawn);
+		if(Character)
 		{
-			Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
+			//Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
+			IsJumping = Character->GetCharacterMovement()->IsFalling();
+			if (!IsJumping)
+			{
+				Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
+			}
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("MoveSpeed : %f"), MoveSpeed);
-		//UE_LOG(LogTemp, Warning, TEXT("Direction : %f"), Direction);
-		//UE_LOG(LogTemp, Warning, TEXT("IsJumping : %d"), IsJumping);
 	}
 }
 

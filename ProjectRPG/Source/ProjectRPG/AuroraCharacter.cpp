@@ -5,6 +5,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "AuroraAnimInstance.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AAuroraCharacter::AAuroraCharacter()
@@ -43,6 +46,11 @@ AAuroraCharacter::AAuroraCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
 	GetCharacterMovement()->bIgnoreBaseRotation = true;
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
+
+	AttackMeleeRange = 100.0f;
+	AttackMeleeRadius = 50.0f;
 }
 
 // Called when the game starts or when spawned
@@ -52,9 +60,73 @@ void AAuroraCharacter::BeginPlay()
 	
 }
 
+void AAuroraCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	AuroraAnimInstance = Cast<UAuroraAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AuroraAnimInstance)
+	{
+		AuroraAnimInstance->OnAttackMeleeHitCheck.AddUObject(this, &AAuroraCharacter::AttackMeleeCheck);
+	}
+}
+
 // Called every frame
 void AAuroraCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+float AAuroraCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (FinalDamage)
+	{
+		AuroraAnimInstance->SetDeadAnimation();
+		SetActorEnableCollision(false);
+	}
+	return FinalDamage;
+}
+
+void AAuroraCharacter::AttackMeleeCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation()+GetActorForwardVector() * AttackMeleeRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(AttackMeleeRadius),
+		Params);
+
+#if ENABLE_DRAW_DEBUG
+
+	FVector TraceVec = GetActorForwardVector() * AttackMeleeRange;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = AttackMeleeRange * 0.5f + AttackMeleeRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+	DrawDebugCapsule(GetWorld(), 
+		Center, 
+		HalfHeight,
+		AttackMeleeRadius, 
+		CapsuleRot, 
+		DrawColor, 
+		false, 
+		DebugLifeTime);
+
+#endif
+
+	if (bResult && HitResult.Actor.IsValid())
+	{
+		FDamageEvent DamageEvent;
+		HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+	}
 }

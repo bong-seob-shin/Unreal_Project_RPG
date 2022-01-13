@@ -19,7 +19,6 @@ class PROJECTRPG_API UAuroraAnimInstance : public UAnimInstance
 
 public:
 	UAuroraAnimInstance();
-	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	void PlayAttackMeleeMontage();
@@ -28,6 +27,8 @@ public:
 public:
 	FOnNextAttackMeleeCheckDelegate OnNextAttackMeleeCheck;
 	FOnAttackMeleeHitCheckDelegate OnAttackMeleeHitCheck;
+
+	void SetDeadAnimation() { IsDead = true; }
 
 private:
 	UFUNCTION()
@@ -48,9 +49,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsJumping;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsDead;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMeleeMontage;
-
-	UPROPERTY()
-	ACharacter* Character;
 };
