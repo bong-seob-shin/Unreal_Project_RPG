@@ -50,11 +50,12 @@ AKallari::AKallari()
 		GetMesh()->SetAnimInstanceClass(KallariAnim.Class);
 	}
 
-	//Set ComboSystem
-	iMaxCombo = 5;
-
 	//Character Setting
+	iMaxCombo = 5;
+	fWalkSpeed = 400; 
+	fDashSpeed = fWalkSpeed * 2.0f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f; //default 420
+	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
 	
 }
 
@@ -98,6 +99,29 @@ void AKallari::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Dash(DeltaTime);
+}
+
+void AKallari::DashStart()
+{
+	bIsDash = true;
+}
+
+void AKallari::Dash(float DeltaTime)
+{
+	if (bIsDash && GetCharacterMovement()->MaxWalkSpeed <= fDashSpeed)
+	{
+		GetCharacterMovement()->MaxWalkSpeed += fSpeedIncreaseRate * DeltaTime;
+	}
+	else if (!bIsDash && GetCharacterMovement()->MaxWalkSpeed >= fWalkSpeed)
+	{
+		GetCharacterMovement()->MaxWalkSpeed -= fSpeedIncreaseRate * DeltaTime;
+	}
+}
+
+void AKallari::DashEnd()
+{
+	bIsDash = false;
 }
 
 bool AKallari::Attack(bool IsAttack)

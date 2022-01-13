@@ -27,9 +27,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void DashStart();
+	void DashEnd();
 	bool Attack(bool IsAttack);
 	void AttackEnd();
 private:
+	void Dash(float DeltaTime);
 	void AttackStartComboState();
 
 private:
@@ -53,5 +56,16 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	int32 iMaxCombo;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float fWalkSpeed;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float fDashSpeed;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsDash;
+
+	const float fSpeedIncreaseRate = 1000.0f;
 
 };

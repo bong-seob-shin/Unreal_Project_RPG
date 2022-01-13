@@ -30,6 +30,8 @@ private:
 	void Horizontal(float Value);
 	void Vertical(float Value);
 
+	void DashStart();
+	void DashEnd();
 	void Jump();
 	void Attack();
 

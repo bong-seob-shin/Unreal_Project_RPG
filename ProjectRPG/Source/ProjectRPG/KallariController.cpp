@@ -16,6 +16,9 @@ void AKallariController::SetupInputComponent()
 	
 	InputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AKallariController::Jump);
 	InputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AKallariController::Attack);
+	InputComponent->BindAction(TEXT("Dash"), EInputEvent::IE_Pressed, this, &AKallariController::DashStart);
+
+	InputComponent->BindAction(TEXT("Dash"), EInputEvent::IE_Released, this, &AKallariController::DashEnd);
 
 
 	InputComponent->BindAxis(TEXT("UpDown"), this, &AKallariController::Updown);
@@ -48,6 +51,29 @@ void AKallariController::Vertical(float Value)
 	APawn* const MyPawn = GetPawn();
 	MyPawn->AddControllerPitchInput(Value);
 	
+}
+
+void AKallariController::DashStart()
+{
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->DashStart();
+	}
+}
+
+void AKallariController::DashEnd()
+{
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->DashEnd();
+	}
 }
 
 void AKallariController::Jump()
