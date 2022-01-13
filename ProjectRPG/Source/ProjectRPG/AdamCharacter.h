@@ -35,15 +35,21 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
+	void Attack(); // ±âº»°ø°Ý. ³ªÁß¿¡ ¹«±â µû¶ó ´Ù¸£°Ô
 
+private:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 	// Ä® °ø°Ý ÄÞº¸
 	void AttackStartComboState();
 	void AttackEndComboState();
+	// Ä® °ø°Ý Å½Áö
+	void AttackCheck();
 
-public:
+private:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsAttacking;
 	// Ä® °ø°Ý ÄÞº¸ º¯¼öµé
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bCanNextCombo;
@@ -54,6 +60,11 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	int32 MaxCombo;
 
+	// Ä® °ø°Ý Ãæµ¹Ã³¸®: Ä¸½¶ µð¹ö±× µå·ÎÀ×
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float AttackRange;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float AttackRadius;
 
 	UPROPERTY()
 	class UAdamAnimInstance* AdamAnim;

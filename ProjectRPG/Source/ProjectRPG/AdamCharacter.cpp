@@ -4,7 +4,7 @@
 #include "AdamCharacter.h"
 #include "AdamAnimInstance.h"
 #include "AdamPlayerController.h"
-
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AAdamCharacter::AAdamCharacter()
@@ -30,12 +30,18 @@ AAdamCharacter::AAdamCharacter()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true; // 폰이 컨트롤 회전값 따라서 돌아가게
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // 회전 속도? 720
-	GetCharacterMovement()->JumpZVelocity = 450.0f; // 점프 높이 조정
+	GetCharacterMovement()->JumpZVelocity = 600.0f; // 점프 높이 조정
 	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
-	
-	MaxCombo = 5; // 칼 공격 = 5콤보
+
+	// 칼 공격 변수들
+	bIsAttacking = false;
+	MaxCombo = 5; 
+	AttackRange = 200.0f;
+	AttackRadius = 50.0f;
+
 	AttackEndComboState();
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("AdamCharacter"));
 	
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ADAM(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/Character/SK_AdamAdventurer.SK_AdamAdventurer"));
@@ -90,6 +96,9 @@ void AAdamCharacter::PostInitializeComponents()
 			AdamAnim->JumpToAttackMontageSection(CurrentCombo);
 		}
 	});
+
+	// 칼 공격 충돌 처리 델리게이트
+	AdamAnim->OnAttackHitCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
 }
 void AAdamCharacter::PossessedBy(AController* NewController)
 {
@@ -104,13 +113,32 @@ void AAdamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+void AAdamCharacter::Attack()
+{
+	if (bIsAttacking)
+	{
+		if (FMath::IsWithinInclusive<int32>(CurrentCombo, 1, MaxCombo))
+		{
+			if (bCanNextCombo)
+				bIsComboInputOn = true;
+		}
+	}
+	else
+	{
+		if (CurrentCombo == 0) {
+			AttackStartComboState();
+			AdamAnim->PlayAttackMontage();
+			AdamAnim->JumpToAttackMontageSection(CurrentCombo);
+			bIsAttacking = true;
+		}
+	}
+}
 
 void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	auto PlayerController = Cast<AAdamPlayerController>(GetController()); // 수정 예정. 로직 캐릭터로 다 옮길 예정.
-	if (PlayerController->bIsAttacking) {
+	if (bIsAttacking) {
 		if (CurrentCombo > 0) {
-			PlayerController->bIsAttacking = false;
+			bIsAttacking = false;
 			AttackEndComboState();
 		}
 	}
@@ -121,7 +149,10 @@ void AAdamCharacter::AttackStartComboState()
 {
 	bCanNextCombo = true;
 	bIsComboInputOn = false;
-	CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, MaxCombo);
+	if (FMath::IsWithinInclusive<int32>(CurrentCombo, 0, MaxCombo - 1))
+	{
+		CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, MaxCombo);
+	}
 
 }
 
@@ -130,4 +161,45 @@ void AAdamCharacter::AttackEndComboState()
 	bIsComboInputOn = false;
 	bCanNextCombo = false;
 	CurrentCombo = 0;
+}
+
+void AAdamCharacter::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 200.0f, //탐색 끝낼 위치: 액터 시선방향으로 200cm 떨어진 곳
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(50.0f), // 탐지에 사용할 도형 : 반지름 50cm 구
+		Params);
+
+	// 콜리젼 디버그 드로잉
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector() * AttackRange;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red; // 공격 판정이 발생하면 녹색, 아니면 빨간색
+	float DebugLifeTime = 5.0f;
+	DrawDebugCapsule(GetWorld(),
+		Center,
+		HalfHeight,
+		AttackRadius,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime);
+#endif
+
+	if (bResult)
+	{
+		if (HitResult.Actor.IsValid())
+		{
+			UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
+		}
+	}
+
 }

@@ -34,13 +34,10 @@ private:
 	void Turn(float NewAxisValue);
 	void Sprint();
 	void StopSprinting();
-	void Attack(); // 기본공격. 나중에 무기 따라 다르게
+	void Attack();
 
 	
 private:
 	class AAdamCharacter* MyCharacter;
-public:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	bool bIsAttacking;
 
 };

@@ -37,7 +37,7 @@ void UAdamAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UAdamAnimInstance::PlayAttackMontage()
 {
-		Montage_Play(AttackMontage, 1.0f);
+	Montage_Play(AttackMontage, 1.0f);
 }
 
 void UAdamAnimInstance::JumpToAttackMontageSection(int32 NewSection)
@@ -61,7 +61,8 @@ void UAdamAnimInstance::AnimNotify_NextAttackCheck()
 FName UAdamAnimInstance::GetAttackMontageSectionName(int32 Section)
 {
 	if (FMath::IsWithinInclusive<int32>(Section, 1, 5))
+		return FName(*FString::Printf(TEXT("Attack%d"), Section));
+	else
 		return NAME_None;
-	return FName(*FString::Printf(TEXT("Attack%d"),Section));
 	
 }
