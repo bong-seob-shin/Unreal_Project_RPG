@@ -27,14 +27,14 @@ void AKallariController::SetupInputComponent()
 void AKallariController::Updown(float Value)
 {
 	APawn* const MyPawn = GetPawn();
-	MyPawn->AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), Value);
+	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw,0.f)).GetUnitAxis(EAxis::X), Value);
 
 }
 
 void AKallariController::LeftRight(float Value)
 {
 	APawn* const MyPawn = GetPawn();
-	MyPawn->AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), Value);
+	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
 }
 
 void AKallariController::Horizontal(float Value)

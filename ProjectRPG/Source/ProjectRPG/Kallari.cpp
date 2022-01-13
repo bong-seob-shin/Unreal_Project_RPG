@@ -52,6 +52,9 @@ AKallari::AKallari()
 
 	//Set ComboSystem
 	iMaxCombo = 5;
+
+	//Character Setting
+	GetCharacterMovement()->JumpZVelocity = 500.0f; //default 420
 	
 }
 
