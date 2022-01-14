@@ -9,6 +9,7 @@ UAuroraAnimInstance::UAuroraAnimInstance()
 {
 	IsJumping = false;
 	IsDead = false;
+	IsShield = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> AttackMelee_Montage(TEXT("AnimMontage'/Game/IceLandWorld/AM_AttackMelee.AM_AttackMelee'"));
 	if (AttackMelee_Montage.Succeeded())
@@ -36,6 +37,8 @@ void UAuroraAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 				Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
 			}
 		}
+		UE_LOG(LogTemp, Warning, TEXT("Jump : %d"), IsJumping);
+		UE_LOG(LogTemp, Warning, TEXT("Shield : %d"), IsShield);
 	}
 }
 

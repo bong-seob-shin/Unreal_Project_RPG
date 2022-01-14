@@ -33,9 +33,10 @@ void AAuroraPlayerController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("LookUp"), this, &AAuroraPlayerController::LookUp);
 
 	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AAuroraPlayerController::Jump);
-	InputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AAuroraPlayerController::StopJumping);
 	InputComponent->BindAction(TEXT("Run"), IE_Pressed, this, &AAuroraPlayerController::BeginRun);
 	InputComponent->BindAction(TEXT("Run"), IE_Released, this, &AAuroraPlayerController::EndRun);
+	InputComponent->BindAction(TEXT("Shield"), IE_Pressed, this, &AAuroraPlayerController::BeginShield);
+	InputComponent->BindAction(TEXT("Shield"), IE_Released, this, &AAuroraPlayerController::EndShield);
 
 	InputComponent->BindAction(TEXT("AttackMelee"), IE_Pressed, this, &AAuroraPlayerController::AttackMelee);
 }
@@ -115,16 +116,6 @@ void AAuroraPlayerController::Jump()
 	}
 }
 
-void AAuroraPlayerController::StopJumping()
-{
-	APawn* const aPawn = GetPawn();
-	AAuroraCharacter* AuroraCharacter = Cast<AAuroraCharacter>(aPawn);
-	if (AuroraCharacter)
-	{
-		AuroraCharacter->StopJumping();
-	}
-}
-
 void AAuroraPlayerController::BeginRun()
 {
 	APawn* const aPawn = GetPawn();
@@ -144,6 +135,17 @@ void AAuroraPlayerController::EndRun()
 		AuroraCharacter->GetCharacterMovement()->MaxWalkSpeed = 400.0f;
 	}
 }
+
+void AAuroraPlayerController::BeginShield()
+{
+	AuroraAnimInstance->SetBeginShieldAnimation();
+}
+
+void AAuroraPlayerController::EndShield()
+{
+	AuroraAnimInstance->SetEndShieldAnimation();
+}
+
 
 void AAuroraPlayerController::AttackMelee()
 {

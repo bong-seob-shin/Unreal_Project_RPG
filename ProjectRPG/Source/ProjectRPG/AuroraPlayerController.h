@@ -30,9 +30,10 @@ private:
 	void LookUp(float Value);
 
 	void Jump();
-	void StopJumping();
 	void BeginRun();
 	void EndRun();
+	void BeginShield();
+	void EndShield();
 
 	void AttackMelee();
 

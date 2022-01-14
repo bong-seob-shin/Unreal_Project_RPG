@@ -29,6 +29,8 @@ public:
 	FOnAttackMeleeHitCheckDelegate OnAttackMeleeHitCheck;
 
 	void SetDeadAnimation() { IsDead = true; }
+	void SetBeginShieldAnimation() { IsShield = true; }
+	void SetEndShieldAnimation() { IsShield = false; }
 
 private:
 	UFUNCTION()
@@ -51,6 +53,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsDead;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsShield;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMeleeMontage;
