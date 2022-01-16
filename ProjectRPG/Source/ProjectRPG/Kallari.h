@@ -34,6 +34,7 @@ public:
 private:
 	void Dash(float DeltaTime);
 	void AttackStartComboState();
+	void AttackCheck();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -44,6 +45,12 @@ private:
 
 	UPROPERTY()
 	class UKallariAnimInstance* AnimInstance;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float fAttackRange;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float fAttackRadius;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bCanNextCombo;
@@ -57,15 +64,17 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	int32 iMaxCombo;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
 	float fWalkSpeed;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
 	float fDashSpeed;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
 	bool bIsDash;
 
 	const float fSpeedIncreaseRate = 1000.0f;
+
+
 
 };

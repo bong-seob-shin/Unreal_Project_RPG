@@ -6,6 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "KallariAnimInstance.h"
 #include "KallariController.h"
+#include "DrawDebugHelpers.h"
+
 // Sets default values
 AKallari::AKallari()
 {
@@ -50,21 +52,23 @@ AKallari::AKallari()
 		GetMesh()->SetAnimInstanceClass(KallariAnim.Class);
 	}
 
+	//Collision Setting
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Kallari"));
+
 	//Character Setting
 	iMaxCombo = 5;
 	fWalkSpeed = 400; 
 	fDashSpeed = fWalkSpeed * 2.0f;
 	GetCharacterMovement()->JumpZVelocity = 500.0f; //default 420
 	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
-	
+	fAttackRange = 200.0f;
+	fAttackRadius = 50.0f;
 }
 
 // Called when the game starts or when spawned
 void AKallari::BeginPlay()
 {
 	Super::BeginPlay();
-	
-
 }
 
 void AKallari::PostInitializeComponents()
@@ -89,6 +93,8 @@ void AKallari::PostInitializeComponents()
 				AnimInstance->JumpToAttackMontageSection(iCurrentCombo);
 			}
 		});
+
+		AnimInstance->OnAttackHitCheck.AddUObject(this, &AKallari::AttackCheck);
 	}
 
 
@@ -148,6 +154,51 @@ void AKallari::AttackStartComboState()
 	bCanNextCombo = true;
 	bIsComboInputOn = false;
 	iCurrentCombo++;
+}
+
+void AKallari::AttackCheck()
+{
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * fAttackRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(fAttackRadius),
+		Params
+	);
+
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector() * fAttackRange;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = fAttackRange * 0.5f + fAttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 5.0f;
+
+	DrawDebugCapsule(GetWorld(),
+		Center,
+		HalfHeight,
+		fAttackRadius,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime);
+
+#endif
+
+
+	if (bResult)
+	{
+		if (HitResult.Actor.IsValid())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
+		}
+	}
 }
 
 void AKallari::AttackEnd()
