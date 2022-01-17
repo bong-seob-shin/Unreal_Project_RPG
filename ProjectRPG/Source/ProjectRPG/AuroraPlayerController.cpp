@@ -39,6 +39,9 @@ void AAuroraPlayerController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Shield"), IE_Released, this, &AAuroraPlayerController::EndShield);
 
 	InputComponent->BindAction(TEXT("AttackMelee"), IE_Pressed, this, &AAuroraPlayerController::AttackMelee);
+	InputComponent->BindAction(TEXT("FirstAbility"), IE_Pressed, this, &AAuroraPlayerController::FirstAbility);
+	InputComponent->BindAction(TEXT("SecondAbility"), IE_Pressed, this, &AAuroraPlayerController::SecondAbility);
+	InputComponent->BindAction(TEXT("ThirdAbility"), IE_Pressed, this, &AAuroraPlayerController::ThirdAbility);
 }
 
 void AAuroraPlayerController::BeginPlay()
@@ -165,17 +168,28 @@ void AAuroraPlayerController::AttackMelee()
 	}
 }
 
+void AAuroraPlayerController::FirstAbility()
+{
+}
+
+void AAuroraPlayerController::SecondAbility()
+{
+}
+
+void AAuroraPlayerController::ThirdAbility()
+{
+}
+
 void AAuroraPlayerController::OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttackingMelee = false;
-	AttackMeleeEndComboState();
+	AttackMeleeEndComboState();	
 }
 
 void AAuroraPlayerController::AttackMeleeStartComboState()
 {
 	canNextCombo = true;
 	IsComboInputOn = false;
-	//CurrentCombo = FMath::Clamp<int32>(CurrentCombo + 1, 1, MaxCombo);
 	CurrentCombo++;
 }
 

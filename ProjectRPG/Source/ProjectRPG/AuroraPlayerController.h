@@ -36,6 +36,9 @@ private:
 	void EndShield();
 
 	void AttackMelee();
+	void FirstAbility();
+	void SecondAbility();
+	void ThirdAbility();
 
 	UFUNCTION()
 	void OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted);

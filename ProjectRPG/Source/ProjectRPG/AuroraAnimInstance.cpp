@@ -8,8 +8,12 @@
 UAuroraAnimInstance::UAuroraAnimInstance()
 {
 	IsJumping = false;
-	IsDead = false;
 	IsShield = false;
+	IsHit = false;
+	IsDead = false;
+	IsFirstAbility = false;
+	IsSecondAbility = false;
+	IsThirdAbility = false;
 
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> AttackMelee_Montage(TEXT("AnimMontage'/Game/IceLandWorld/AM_AttackMelee.AM_AttackMelee'"));
 	if (AttackMelee_Montage.Succeeded())
@@ -68,4 +72,17 @@ void UAuroraAnimInstance::AnimNotify_NextAttackMeleeCheck()
 FName UAuroraAnimInstance::GetAttackMeleeMontageSectionName(int32 SectionIndex)
 {
 	return FName(*FString::Printf(TEXT("Attack%d"), SectionIndex));
+}
+
+void UAuroraAnimInstance::AnimNotify_FirstAbilityEnd()
+{
+	OnFirstAbilityEnd.Broadcast();
+}
+
+void UAuroraAnimInstance::AnimNotify_SecondAbilityEnd()
+{
+}
+
+void UAuroraAnimInstance::AnimNotify_ThirdAbilityEnd()
+{
 }

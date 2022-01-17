@@ -8,6 +8,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnNextAttackMeleeCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackMeleeHitCheckDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnFirstAbilityEndDelegate);
 
 /**
  * 
@@ -27,7 +28,9 @@ public:
 public:
 	FOnNextAttackMeleeCheckDelegate OnNextAttackMeleeCheck;
 	FOnAttackMeleeHitCheckDelegate OnAttackMeleeHitCheck;
+	FOnFirstAbilityEndDelegate OnFirstAbilityEnd;
 
+	void SetHitAnimation() { IsHit  = true; }
 	void SetDeadAnimation() { IsDead = true; }
 	void SetBeginShieldAnimation() { IsShield = true; }
 	void SetEndShieldAnimation() { IsShield = false; }
@@ -41,6 +44,15 @@ private:
 
 	FName GetAttackMeleeMontageSectionName(int32 SectionIndex);
 
+	UFUNCTION()
+	void AnimNotify_FirstAbilityEnd();
+
+	UFUNCTION()
+	void AnimNotify_SecondAbilityEnd();
+
+	UFUNCTION()
+	void AnimNotify_ThirdAbilityEnd();
+
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float MoveSpeed;
@@ -52,11 +64,26 @@ private:
 	bool IsJumping;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	bool IsDead;
+	bool IsShield;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	bool IsShield;
+	bool IsHit;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool IsDead;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMeleeMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, Meta = (AllowPrivateAccess = true))
+	bool IsFirstAbility;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, Meta = (AllowPrivateAccess = true))
+	bool IsSecondAbility;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Ability, Meta = (AllowPrivateAccess = true))
+	bool IsThirdAbility;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	UAnimNotify* Attacsk;
 };

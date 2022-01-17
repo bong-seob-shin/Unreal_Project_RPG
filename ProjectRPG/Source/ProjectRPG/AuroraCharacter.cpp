@@ -82,6 +82,9 @@ float AAuroraCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	// hp > 0 => hit
+	// hp = 0 => dead
+
 	if (FinalDamage)
 	{
 		AuroraAnimInstance->SetDeadAnimation();
