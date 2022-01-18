@@ -41,8 +41,6 @@ void UAuroraAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 				Direction = CalculateDirection(Character->GetVelocity(), Character->GetActorRotation());
 			}
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Jump : %d"), IsJumping);
-		UE_LOG(LogTemp, Warning, TEXT("Shield : %d"), IsShield);
 	}
 }
 

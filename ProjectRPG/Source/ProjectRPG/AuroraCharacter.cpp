@@ -8,6 +8,8 @@
 #include "Components/CapsuleComponent.h"
 #include "AuroraAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/Classes//Particles//ParticleSystem.h"
 
 // Sets default values
 AAuroraCharacter::AAuroraCharacter()
@@ -51,6 +53,15 @@ AAuroraCharacter::AAuroraCharacter()
 
 	AttackMeleeRange = 100.0f;
 	AttackMeleeRadius = 50.0f;
+
+
+
+
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> AttackMelee_Particle(TEXT("ParticleSystem'/Game/IceLandWorld/ParagonAurora/FX/Particles/Abilities/Primary/FX/P_Aurora_Melee_SucessfulImpact.P_Aurora_Melee_SucessfulImpact'"));
+	if (AttackMelee_Particle.Succeeded())
+	{
+		AttackHitParticle = AttackMelee_Particle.Object;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -132,4 +143,16 @@ void AAuroraCharacter::AttackMeleeCheck()
 		FDamageEvent DamageEvent;
 		HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
 	}
+}
+
+void AAuroraCharacter::HitFX()
+{
+	FName WeaponSocket(TEXT("Sword_Tip"));
+	FVector SwordTipVec;
+	if (GetMesh()->DoesSocketExist(WeaponSocket))
+	{
+		SwordTipVec = GetMesh()->GetSocketLocation(WeaponSocket);
+	}
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackHitParticle, SwordTipVec);
 }
