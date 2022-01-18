@@ -23,9 +23,9 @@ public:
 	void PlayAttackMontage(); // 무기에 따라 다르게 할 예정
 	void JumpToAttackMontageSection(int32 NewSection); // 칼 콤보공격
 public:
-	// 칼 콤보공격 변수들
 	FOnNextAttackCheckDelegate OnNextAttackCheck;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	void SetDeadAnim() { bIsDead = true; }
 private:
 	// 칼 콤보공격 체크 애님 노티파이
 	UFUNCTION()
@@ -42,10 +42,16 @@ private:
 	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentPawnDir;*/ // 캐릭터 진행 방향
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool bIsDead;  // 죽는 애니메이션 재생 위한 변수
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool bIsFalling;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
 	UAnimMontage* AttackMontage;
+
+	
+
 
 };

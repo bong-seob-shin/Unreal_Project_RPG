@@ -9,6 +9,7 @@ UAdamAnimInstance::UAdamAnimInstance()
 {
 	CurrentPawnSpeed = 0.0f;
 	bIsFalling = false;
+	bIsDead = false;
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
 	if (ATTACK_MTG.Succeeded())
 	{
@@ -22,7 +23,10 @@ void UAdamAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	auto Pawn = TryGetPawnOwner();
-	if (::IsValid(Pawn))
+	if (!::IsValid(Pawn))
+		return;
+
+	if (!bIsDead)
 	{
 		CurrentPawnSpeed = Pawn->GetVelocity().Size();
 		//CurrentPawnDir = CalculateDirection(Pawn->GetVelocity(), FRotator(0.0f, Pawn->GetControlRotation().Yaw, 0.0f)); // pawn의 진행방향 구하는 코드
@@ -37,14 +41,18 @@ void UAdamAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UAdamAnimInstance::PlayAttackMontage()
 {
-	Montage_Play(AttackMontage, 1.0f);
+	if(!bIsDead)
+		Montage_Play(AttackMontage, 1.0f);
 }
 
 void UAdamAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
-	if (Montage_IsPlaying(AttackMontage)) // 칼 콤보 공격 몽타주가 재생중이라면
+	if (!bIsDead)
 	{
-		Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
+		if (Montage_IsPlaying(AttackMontage)) // 칼 콤보 공격 몽타주가 재생중이라면
+		{
+			Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
+		}
 	}
 }
 
