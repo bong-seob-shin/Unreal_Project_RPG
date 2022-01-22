@@ -51,12 +51,16 @@ AAuroraCharacter::AAuroraCharacter()
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
 
+	// AttackMelee
+	IsAttackingMelee = false;
+	
+	MaxCombo = 4;
+	AttackMeleeEndComboState();
+
 	AttackMeleeRange = 100.0f;
 	AttackMeleeRadius = 50.0f;
 
-
-
-
+	// Hit FX
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> AttackMelee_Particle(TEXT("ParticleSystem'/Game/IceLandWorld/ParagonAurora/FX/Particles/Abilities/Primary/FX/P_Aurora_Melee_SucessfulImpact.P_Aurora_Melee_SucessfulImpact'"));
 	if (AttackMelee_Particle.Succeeded())
 	{
@@ -68,7 +72,6 @@ AAuroraCharacter::AAuroraCharacter()
 void AAuroraCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AAuroraCharacter::PostInitializeComponents()
@@ -78,6 +81,18 @@ void AAuroraCharacter::PostInitializeComponents()
 	AuroraAnimInstance = Cast<UAuroraAnimInstance>(GetMesh()->GetAnimInstance());
 	if (AuroraAnimInstance)
 	{
+		AuroraAnimInstance->OnMontageEnded.AddDynamic(this, &AAuroraCharacter::OnAttackMeleeMontageEnded);
+	
+		AuroraAnimInstance->OnNextAttackMeleeCheck.AddLambda([this]()-> void {
+			CanNextCombo = false;
+
+			if (IsComboInputOn)
+			{
+				AttackMeleeStartComboState();
+				AuroraAnimInstance->JumpToAttackMeleeMontageSection(CurrentCombo);
+			}
+		});
+
 		AuroraAnimInstance->OnAttackMeleeHitCheck.AddUObject(this, &AAuroraCharacter::AttackMeleeCheck);
 	}
 }
@@ -86,7 +101,6 @@ void AAuroraCharacter::PostInitializeComponents()
 void AAuroraCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 float AAuroraCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -102,6 +116,26 @@ float AAuroraCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		SetActorEnableCollision(false);
 	}
 	return FinalDamage;
+}
+
+void AAuroraCharacter::OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttackingMelee = false;
+	AttackMeleeEndComboState();
+}
+
+void AAuroraCharacter::AttackMeleeStartComboState()
+{
+	CanNextCombo = true;
+	IsComboInputOn = false;
+	CurrentCombo++;
+}
+
+void AAuroraCharacter::AttackMeleeEndComboState()
+{
+	CanNextCombo = false;
+	IsComboInputOn = false;
+	CurrentCombo = 0;
 }
 
 void AAuroraCharacter::AttackMeleeCheck()
@@ -155,4 +189,22 @@ void AAuroraCharacter::HitFX()
 	}
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), AttackHitParticle, SwordTipVec);
+}
+
+void AAuroraCharacter::AttackMelee()
+{
+	if (IsAttackingMelee)
+	{
+		if (CanNextCombo)
+		{
+			IsComboInputOn = true;
+		}
+	}
+	else
+	{
+		AttackMeleeStartComboState();
+		AuroraAnimInstance->PlayAttackMeleeMontage();
+		AuroraAnimInstance->JumpToAttackMeleeMontageSection(CurrentCombo);
+		IsAttackingMelee = true;
+	}
 }

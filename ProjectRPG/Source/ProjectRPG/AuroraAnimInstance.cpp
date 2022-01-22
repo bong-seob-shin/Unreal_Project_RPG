@@ -27,7 +27,9 @@ void UAuroraAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	auto Pawn = TryGetPawnOwner();
-	if (IsValid(Pawn))
+	if (!IsValid(Pawn)) return;
+
+	if(!IsDead)
 	{
 		MoveSpeed = Pawn->GetVelocity().Size();
 
@@ -74,13 +76,15 @@ FName UAuroraAnimInstance::GetAttackMeleeMontageSectionName(int32 SectionIndex)
 
 void UAuroraAnimInstance::AnimNotify_FirstAbilityEnd()
 {
-	OnFirstAbilityEnd.Broadcast();
+	IsFirstAbility = false;
 }
 
 void UAuroraAnimInstance::AnimNotify_SecondAbilityEnd()
 {
+	IsSecondAbility = false;
 }
 
 void UAuroraAnimInstance::AnimNotify_ThirdAbilityEnd()
 {
+	IsThirdAbility = false;
 }

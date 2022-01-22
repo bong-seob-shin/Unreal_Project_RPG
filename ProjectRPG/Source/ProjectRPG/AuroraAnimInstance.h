@@ -34,6 +34,9 @@ public:
 	void SetDeadAnimation() { IsDead = true; }
 	void SetBeginShieldAnimation() { IsShield = true; }
 	void SetEndShieldAnimation() { IsShield = false; }
+	void SetFirstAbility(){ IsFirstAbility = true; }
+	void SetSecondAbility(){ IsSecondAbility = true; }
+	void SetThirdAbility(){ IsThirdAbility = true; }
 
 private:
 	UFUNCTION()

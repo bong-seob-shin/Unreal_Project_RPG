@@ -40,28 +40,10 @@ private:
 	void SecondAbility();
 	void ThirdAbility();
 
-	UFUNCTION()
-	void OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
-	void AttackMeleeStartComboState();
-	void AttackMeleeEndComboState();
-
 private:
-	UPROPERTY(VisibleAnywhere, Category = Attack, Meta = (AllowPrivateAccess = true))
-	bool IsAttackingMelee;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	bool canNextCombo;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	bool IsComboInputOn;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	int32 CurrentCombo;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	int32 MaxCombo;
-
 	UPROPERTY()
 	class UAuroraAnimInstance* AuroraAnimInstance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Ability, Meta = (AllowPrivateAccess = true))
+	bool IsAbility;
 };

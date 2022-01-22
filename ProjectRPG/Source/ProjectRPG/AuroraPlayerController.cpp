@@ -11,10 +11,7 @@ AAuroraPlayerController::AAuroraPlayerController()
 {
 	PlayerCameraManagerClass = AAuroraPlayerCameraManager::StaticClass();
 
-	IsAttackingMelee = false;
-
-	MaxCombo = 4;
-	AttackMeleeEndComboState();
+	IsAbility = false;
 }
 
 void AAuroraPlayerController::PostInitializeComponents()
@@ -53,24 +50,14 @@ void AAuroraPlayerController::BeginPlay()
 	if (AuroraCharacter == nullptr) return;
 	
 	AuroraCharacter->GetCharacterMovement()->MaxWalkSpeed = 400.0f;
-	AuroraAnimInstance = Cast<UAuroraAnimInstance>(AuroraCharacter->GetMesh()->GetAnimInstance());
-	AuroraAnimInstance->OnMontageEnded.AddDynamic(this, &AAuroraPlayerController::OnAttackMeleeMontageEnded);
 
-	AuroraAnimInstance->OnNextAttackMeleeCheck.AddLambda([this]()-> void {
-		canNextCombo = false;
-
-		if (IsComboInputOn)
-		{
-			AttackMeleeStartComboState();
-			AuroraAnimInstance->JumpToAttackMeleeMontageSection(CurrentCombo);
-		}
-	});
+	AuroraAnimInstance =  Cast<UAuroraAnimInstance>(AuroraCharacter->GetMesh()->GetAnimInstance());
 }
 
 void AAuroraPlayerController::MoveForward(float Value)
 {
 	APawn* const aPawn = GetPawn();
-	if (aPawn && (Value != 0.0f))
+	if (aPawn && (Value != 0.0f) && !IsAbility)
 	{
 		const FRotator Rotation = GetControlRotation();
 		const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
@@ -82,7 +69,7 @@ void AAuroraPlayerController::MoveForward(float Value)
 void AAuroraPlayerController::MoveRight(float Value)
 {
 	APawn* const aPawn = GetPawn();
-	if (aPawn && (Value != 0.0f))
+	if (aPawn && (Value != 0.0f) && !IsAbility)
 	{
 		const FRotator Rotation = GetControlRotation();
 		const FRotator YawRotation(0.0f, Rotation.Yaw, 0.0f);
@@ -113,7 +100,7 @@ void AAuroraPlayerController::Jump()
 {
 	APawn* const aPawn = GetPawn();
 	AAuroraCharacter* AuroraCharacter = Cast<AAuroraCharacter>(aPawn);
-	if (AuroraCharacter)
+	if (AuroraCharacter && !IsAbility)
 	{
 		AuroraCharacter->Jump();
 	}
@@ -149,53 +136,27 @@ void AAuroraPlayerController::EndShield()
 	AuroraAnimInstance->SetEndShieldAnimation();
 }
 
-
 void AAuroraPlayerController::AttackMelee()
 {
-	if (IsAttackingMelee)
+	APawn* const aPawn = GetPawn();
+	AAuroraCharacter* AuroraCharacter = Cast<AAuroraCharacter>(aPawn);
+	if (AuroraCharacter)
 	{
-		if (canNextCombo)
-		{
-			IsComboInputOn = true;
-		}
-	}
-	else
-	{
-		AttackMeleeStartComboState();
-		AuroraAnimInstance->PlayAttackMeleeMontage();
-		AuroraAnimInstance->JumpToAttackMeleeMontageSection(CurrentCombo);
-		IsAttackingMelee = true;
+		AuroraCharacter->AttackMelee();
 	}
 }
 
 void AAuroraPlayerController::FirstAbility()
 {
+	AuroraAnimInstance->SetFirstAbility();
 }
 
 void AAuroraPlayerController::SecondAbility()
 {
+	AuroraAnimInstance->SetSecondAbility();
 }
 
 void AAuroraPlayerController::ThirdAbility()
 {
-}
-
-void AAuroraPlayerController::OnAttackMeleeMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	IsAttackingMelee = false;
-	AttackMeleeEndComboState();	
-}
-
-void AAuroraPlayerController::AttackMeleeStartComboState()
-{
-	canNextCombo = true;
-	IsComboInputOn = false;
-	CurrentCombo++;
-}
-
-void AAuroraPlayerController::AttackMeleeEndComboState()
-{
-	IsComboInputOn = false;
-	canNextCombo = false;
-	CurrentCombo = 0;
+	AuroraAnimInstance->SetThirdAbility();
 }
