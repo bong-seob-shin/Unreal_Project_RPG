@@ -37,6 +37,9 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
 	void Attack(); // 기본공격. 나중에 무기 따라 다르게
+	// shift키-달리기
+	void Sprint(); 
+	void StopSprinting();
 
 private:
 	UFUNCTION()

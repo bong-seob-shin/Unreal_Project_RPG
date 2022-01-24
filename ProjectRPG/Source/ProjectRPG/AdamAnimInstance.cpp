@@ -52,6 +52,7 @@ void UAdamAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 		if (Montage_IsPlaying(AttackMontage)) // 칼 콤보 공격 몽타주가 재생중이라면
 		{
 			Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
+			//Montage_Play(AttackMontage, 1.0f);
 		}
 	}
 }

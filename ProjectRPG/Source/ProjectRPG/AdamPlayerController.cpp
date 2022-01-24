@@ -110,7 +110,7 @@ void AAdamPlayerController::Sprint()
 {
 	if (MyCharacter)
 	{
-		MyCharacter->GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+		MyCharacter->Sprint();
 	}
 }
 
@@ -118,7 +118,7 @@ void AAdamPlayerController::StopSprinting()
 {
 	if (MyCharacter)
 	{
-		MyCharacter->GetCharacterMovement()->MaxWalkSpeed = 450.0f;
+		MyCharacter->StopSprinting();
 	}
 }
 

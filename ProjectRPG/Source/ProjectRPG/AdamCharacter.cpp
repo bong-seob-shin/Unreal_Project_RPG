@@ -146,6 +146,23 @@ void AAdamCharacter::Attack()
 	}
 }
 
+void AAdamCharacter::Sprint()
+{
+	GetCharacterMovement()->MaxAcceleration = 1042.f;
+	GetCharacterMovement()->BrakingDecelerationWalking = 1042.f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+}
+
+void AAdamCharacter::StopSprinting()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 450.f;
+	if (GetVelocity().Size() == 450.0f)
+	{
+		GetCharacterMovement()->MaxAcceleration = 2048.f;
+		GetCharacterMovement()->BrakingDecelerationWalking = 2048.f;
+	}
+}
+
 void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (bIsAttacking) {
