@@ -4,6 +4,7 @@
 #include "AdamCharacter.h"
 #include "AdamAnimInstance.h"
 #include "AdamPlayerController.h"
+#include "AdamWeaponSword.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -31,7 +32,8 @@ AAdamCharacter::AAdamCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true; // 폰이 컨트롤 회전값 따라서 돌아가게
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // 회전 속도? 720
 	GetCharacterMovement()->JumpZVelocity = 600.0f; // 점프 높이 조정
-	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
+	GetCharacterMovement()->BrakingDecelerationWalking = fDeceleration;
 
 	// 칼 공격 변수들
 	bIsAttacking = false;
@@ -58,8 +60,7 @@ AAdamCharacter::AAdamCharacter()
 		GetMesh()->SetAnimInstanceClass(ADAM_ANIM.Class);
 	}
 
-
-
+	
 
 }
 
@@ -68,6 +69,15 @@ void AAdamCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// 무기 소켓에 무기 장착
+	FName WeaponSocket(TEXT("WeaponHandMount_rSocket")); // 공통 무기 소켓
+	auto CurWeapon = GetWorld()->SpawnActor<AAdamWeaponSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+	if (nullptr != CurWeapon) {
+		if (GetMesh()->DoesSocketExist(WeaponSocket))
+		{
+			CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+		}
+	}
 }
 
 // Called every frame
@@ -148,19 +158,23 @@ void AAdamCharacter::Attack()
 
 void AAdamCharacter::Sprint()
 {
-	GetCharacterMovement()->MaxAcceleration = 1042.f;
-	GetCharacterMovement()->BrakingDecelerationWalking = 1042.f;
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	if (GetVelocity().Size() != 0.0f) {
+		GetCharacterMovement()->MaxAcceleration = 521.f;
+		//GetCharacterMovement()->BrakingDecelerationWalking = 521.f;
+		GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed * 2;
+		AdamAnim->SetSprintAnim(true);
+	}
 }
 
 void AAdamCharacter::StopSprinting()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 450.f;
-	if (GetVelocity().Size() == 450.0f)
-	{
-		GetCharacterMovement()->MaxAcceleration = 2048.f;
-		GetCharacterMovement()->BrakingDecelerationWalking = 2048.f;
-	}
+	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
+	AdamAnim->SetSprintAnim(false);
+
+	
+	GetCharacterMovement()->MaxAcceleration = fAcceleration;
+
+
 }
 
 void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)

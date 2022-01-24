@@ -9,7 +9,10 @@ UAdamAnimInstance::UAdamAnimInstance()
 {
 	CurrentPawnSpeed = 0.0f;
 	bIsFalling = false;
+	bIsSprinting = false;
 	bIsDead = false;
+	// 랜덤 죽음 애니메이션 인덱스 세팅
+	RandDeathAnimIdx = FMath::RandRange(0, 1);
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
 	if (ATTACK_MTG.Succeeded())
 	{
@@ -52,7 +55,6 @@ void UAdamAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 		if (Montage_IsPlaying(AttackMontage)) // 칼 콤보 공격 몽타주가 재생중이라면
 		{
 			Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
-			//Montage_Play(AttackMontage, 1.0f);
 		}
 	}
 }

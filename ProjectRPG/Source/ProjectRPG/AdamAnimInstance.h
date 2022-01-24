@@ -26,6 +26,7 @@ public:
 	FOnNextAttackCheckDelegate OnNextAttackCheck;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	void SetDeadAnim() { bIsDead = true; }
+	void SetSprintAnim(bool bPressedShift) { bIsSprinting = bPressedShift; }
 private:
 	// 칼 콤보공격 체크 애님 노티파이
 	UFUNCTION()
@@ -44,9 +45,16 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool bIsDead;  // 죽는 애니메이션 재생 위한 변수
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	int32 RandDeathAnimIdx; // 랜덤 죽음 애니메이션 위한 인덱스
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool bIsFalling;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	bool bIsSprinting; // toggle shift
+
+	
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
 	UAnimMontage* AttackMontage;

@@ -31,6 +31,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
+	
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
 
@@ -54,6 +55,7 @@ private:
 private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bIsAttacking;
+
 	// 칼 공격 콤보 변수들
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bCanNextCombo;
@@ -73,4 +75,10 @@ private:
 	UPROPERTY()
 	class UAdamAnimInstance* AdamAnim;
 
+	// 캐릭터 무브먼트 관련 기본값들
+	const float fWalkSpeed = 300.f;
+	const float fAcceleration = 2048.f;
+	const float fDeceleration = 521.f;
+
+	
 };
