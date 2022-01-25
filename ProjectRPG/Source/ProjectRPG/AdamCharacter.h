@@ -7,6 +7,15 @@
 #include "GameFramework/Character.h"
 #include "AdamCharacter.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	E_SWORDSHIELD UMETA(DisplayName = "SwordShield"),
+	E_BOW UMETA(DisplayName = "Bow")
+};
+
+
 UCLASS()
 class PROJECTRPG_API AAdamCharacter : public ACharacter
 {
@@ -53,6 +62,9 @@ private:
 	void AttackCheck();
 
 private:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // 현재 무기 타입
+	EWeaponType CurWeaponType;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bIsAttacking;
 

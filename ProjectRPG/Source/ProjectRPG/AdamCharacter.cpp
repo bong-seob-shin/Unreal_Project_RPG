@@ -5,6 +5,7 @@
 #include "AdamAnimInstance.h"
 #include "AdamPlayerController.h"
 #include "AdamWeaponSword.h"
+#include "AdamWeaponShield.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -35,6 +36,8 @@ AAdamCharacter::AAdamCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
 	GetCharacterMovement()->BrakingDecelerationWalking = fDeceleration;
 
+	// 무기 타입 디폴트 : 칼,방패
+	CurWeaponType = EWeaponType::E_SWORDSHIELD;
 	// 칼 공격 변수들
 	bIsAttacking = false;
 	MaxCombo = 5; 
@@ -69,13 +72,23 @@ void AAdamCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// 무기 소켓에 무기 장착
-	FName WeaponSocket(TEXT("WeaponHandMount_rSocket")); // 공통 무기 소켓
-	auto CurWeapon = GetWorld()->SpawnActor<AAdamWeaponSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-	if (nullptr != CurWeapon) {
-		if (GetMesh()->DoesSocketExist(WeaponSocket))
-		{
-			CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+	if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
+		// 무기 소켓에 무기 장착
+		FName WeaponSocket(TEXT("WeaponHandMount_rSocket")); // 공통 무기 소켓
+		auto CurWeapon = GetWorld()->SpawnActor<AAdamWeaponSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (nullptr != CurWeapon) {
+			if (GetMesh()->DoesSocketExist(WeaponSocket))
+			{
+				CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+			}
+		}
+		FName ShieldSocket(TEXT("ShieldMountSocket")); // 쉴드 소켓
+		auto shield = GetWorld()->SpawnActor<AAdamWeaponShield>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (nullptr != shield) {
+			if (GetMesh()->DoesSocketExist(ShieldSocket))
+			{
+				shield->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
+			}
 		}
 	}
 }
