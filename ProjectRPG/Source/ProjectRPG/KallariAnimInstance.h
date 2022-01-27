@@ -42,15 +42,16 @@ public:
 	FOnNextAttackCheck OnNextAttackCheck;
 	FOnAttackHitCheck OnAttackHitCheck;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
-		bool bIsFalling;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
-		bool bIsEvading;
+	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
 	float fCurrentSpeed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
+	bool bIsFalling;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
+	bool bIsEvading;
 	
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))

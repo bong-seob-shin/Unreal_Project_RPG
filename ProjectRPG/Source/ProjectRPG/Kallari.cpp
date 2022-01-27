@@ -137,16 +137,18 @@ void AKallari::DashEnd()
 
 void AKallari::Evade()
 {
-	AnimInstance->SetIsEvading(true);
-	
-	GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	FVector Direction = (GetMesh()->GetForwardVector().RotateAngleAxis(-90.0f,FVector::ZAxisVector)) + FVector::UpVector;
-	GetCharacterMovement()->Velocity = Direction * fJumpForce;
+	if (!GetMovementComponent()->IsFalling()) {
+		AnimInstance->SetIsEvading(true);
 
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		FVector Direction = (-GetCapsuleComponent()->GetForwardVector()) + FVector::UpVector;
+		GetMovementComponent()->Velocity = Direction * fJumpForce;
+	}
 }
 
 bool AKallari::Attack(bool IsAttack)
 {
+	
 	if (IsAttack) {
 		if (bCanNextCombo)
 		{
