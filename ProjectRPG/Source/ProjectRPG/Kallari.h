@@ -29,6 +29,7 @@ public:
 
 	void DashStart();
 	void DashEnd();
+	void Evade();
 	bool Attack(bool IsAttack);
 	void AttackEnd();
 private:
@@ -69,6 +70,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
 	float fDashSpeed;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
+	float fJumpForce;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
 	bool bIsDash;

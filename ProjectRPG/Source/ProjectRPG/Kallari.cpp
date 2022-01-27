@@ -7,6 +7,7 @@
 #include "KallariAnimInstance.h"
 #include "KallariController.h"
 #include "DrawDebugHelpers.h"
+#include "Components/PrimitiveComponent.h"
 
 // Sets default values
 AKallari::AKallari()
@@ -43,6 +44,8 @@ AKallari::AKallari()
 		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);
 	}
 
+
+
 	//Animation Setting
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
@@ -52,14 +55,16 @@ AKallari::AKallari()
 		GetMesh()->SetAnimInstanceClass(KallariAnim.Class);
 	}
 
+
 	//Collision Setting
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Kallari"));
 
 	//Character Setting
 	iMaxCombo = 5;
-	fWalkSpeed = 400; 
+	fWalkSpeed = 400.0f; 
 	fDashSpeed = fWalkSpeed * 2.0f;
-	GetCharacterMovement()->JumpZVelocity = 500.0f; //default 420
+	fJumpForce = 500.0f;//default 420
+	GetCharacterMovement()->JumpZVelocity = fJumpForce;
 	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
 	fAttackRange = 200.0f;
 	fAttackRadius = 50.0f;
@@ -128,6 +133,16 @@ void AKallari::Dash(float DeltaTime)
 void AKallari::DashEnd()
 {
 	bIsDash = false;
+}
+
+void AKallari::Evade()
+{
+	AnimInstance->SetIsEvading(true);
+	
+	GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	FVector Direction = (GetMesh()->GetForwardVector().RotateAngleAxis(-90.0f,FVector::ZAxisVector)) + FVector::UpVector;
+	GetCharacterMovement()->Velocity = Direction * fJumpForce;
+
 }
 
 bool AKallari::Attack(bool IsAttack)

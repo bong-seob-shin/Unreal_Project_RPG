@@ -34,6 +34,7 @@ private:
 	void DashEnd();
 	void Jump();
 	void Attack();
+	void Evade();
 
 
 private:

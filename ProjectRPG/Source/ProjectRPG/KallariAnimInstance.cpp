@@ -58,8 +58,18 @@ void UKallariAnimInstance::AnimNotify_NextAttackCheck()
 	OnNextAttackCheck.Broadcast();
 }
 
+void UKallariAnimInstance::AnimNotify_EvadeEnd()
+{
+	bIsEvading = false;
+}
+
 FName UKallariAnimInstance::GetAttackMontageSection(int32 index)
 {
 	return FName(*FString::Printf(TEXT("Attack%d"),index));
+}
+
+void UKallariAnimInstance::SetIsEvading(bool IsEvading)
+{
+	bIsEvading = IsEvading;
 }
 

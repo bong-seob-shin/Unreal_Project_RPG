@@ -20,6 +20,8 @@ class PROJECTRPG_API UKallariAnimInstance : public UAnimInstance
 public:
 	UKallariAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	
+	void SetIsEvading(bool IsEvading);
 
 	void PlayAttackMontage();
 	void JumpToAttackMontageSection(int32 index);
@@ -30,17 +32,26 @@ private:
 	UFUNCTION()
 	void AnimNotify_NextAttackCheck();
 
+	UFUNCTION()
+	void AnimNotify_EvadeEnd();
+
 	FName GetAttackMontageSection(int32 index);
+
+
 public:
 	FOnNextAttackCheck OnNextAttackCheck;
 	FOnAttackHitCheck OnAttackHitCheck;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
+		bool bIsFalling;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
+		bool bIsEvading;
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
 	float fCurrentSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
-	bool bIsFalling;
+	
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;

@@ -17,6 +17,7 @@ void AKallariController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Jump"), EInputEvent::IE_Pressed, this, &AKallariController::Jump);
 	InputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AKallariController::Attack);
 	InputComponent->BindAction(TEXT("Dash"), EInputEvent::IE_Pressed, this, &AKallariController::DashStart);
+	InputComponent->BindAction(TEXT("Evade"), EInputEvent::IE_Pressed, this, &AKallariController::Evade);
 
 	InputComponent->BindAction(TEXT("Dash"), EInputEvent::IE_Released, this, &AKallariController::DashEnd);
 
@@ -99,13 +100,24 @@ void AKallariController::Attack()
 
 }
 
+void AKallariController::Evade()
+{
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->Evade();
+	}
+}
+
 
 void AKallariController::OnAttackMontageEnded(UAnimMontage* Montage, bool blnterrupted)
 {
 	bIsAttacking = false;
 	APawn* const MyPawn = GetPawn();
 	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
-
+	
 	if (MyCharacter != nullptr)
 	{
 		MyCharacter->AttackEnd();
