@@ -139,7 +139,7 @@ void AKallari::Evade()
 {
 	if (!GetMovementComponent()->IsFalling()) {
 		AnimInstance->SetIsEvading(true);
-
+		AnimInstance->StopAllMontages(0.1f);
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		FVector Direction = (-GetCapsuleComponent()->GetForwardVector()) + FVector::UpVector;
 		GetMovementComponent()->Velocity = Direction * fJumpForce;
@@ -148,19 +148,21 @@ void AKallari::Evade()
 
 bool AKallari::Attack(bool IsAttack)
 {
-	
-	if (IsAttack) {
-		if (bCanNextCombo)
-		{
-			bIsComboInputOn = true;
+	if (!AnimInstance->GetIsEvading()) {
+		if (IsAttack) {
+			if (bCanNextCombo)
+			{
+				bIsComboInputOn = true;
+			}
 		}
+		else {
+			AttackStartComboState();
+			AnimInstance->PlayAttackMontage();
+			AnimInstance->JumpToAttackMontageSection(iCurrentCombo);
+		}
+		return true;
 	}
-	else {
-		AttackStartComboState();
-		AnimInstance->PlayAttackMontage();
-		AnimInstance->JumpToAttackMontageSection(iCurrentCombo);
-	}
-	return true;
+	return false;
 }
 
 

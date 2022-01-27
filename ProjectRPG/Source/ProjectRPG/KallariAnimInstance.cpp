@@ -48,6 +48,11 @@ void UKallariAnimInstance::JumpToAttackMontageSection(int32 index)
 	Montage_JumpToSection(GetAttackMontageSection(index),AttackMontage);
 }
 
+bool UKallariAnimInstance::GetIsEvading()
+{
+	return bIsEvading;
+}
+
 void UKallariAnimInstance::AnimNotify_AttackHit()
 {
 	OnAttackHitCheck.Broadcast();

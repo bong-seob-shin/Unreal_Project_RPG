@@ -30,15 +30,19 @@ void AKallariController::SetupInputComponent()
 
 void AKallariController::Updown(float Value)
 {
-	APawn* const MyPawn = GetPawn();
-	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw,0.f)).GetUnitAxis(EAxis::X), Value);
+	if (!bIsAttacking) {
+		APawn* const MyPawn = GetPawn();
+		MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X), Value);
 
+	}
 }
 
 void AKallariController::LeftRight(float Value)
 {
-	APawn* const MyPawn = GetPawn();
-	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
+	if (!bIsAttacking) {
+		APawn* const MyPawn = GetPawn();
+		MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
+	}
 }
 
 void AKallariController::Horizontal(float Value)
@@ -102,13 +106,15 @@ void AKallariController::Attack()
 
 void AKallariController::Evade()
 {
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+	
+		APawn* const MyPawn = GetPawn();
+		AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->Evade();
-	}
+		if (MyCharacter != nullptr)
+		{
+			MyCharacter->Evade();
+		}
+	
 }
 
 

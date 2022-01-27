@@ -25,6 +25,8 @@ public:
 
 	void PlayAttackMontage();
 	void JumpToAttackMontageSection(int32 index);
+
+	bool GetIsEvading();
 private:
 	UFUNCTION()
 	void AnimNotify_AttackHit();
