@@ -8,6 +8,7 @@
 #include "KallariController.h"
 #include "DrawDebugHelpers.h"
 #include "Components/PrimitiveComponent.h"
+#include "Components/DecalComponent.h"
 
 // Sets default values
 AKallari::AKallari()
@@ -18,9 +19,14 @@ AKallari::AKallari()
 	//ComponentSetting
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	ShadowDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
-	
+	ShadowDecal->SetupAttachment(GetCapsuleComponent());
+	ShadowDecal->DecalSize = FVector(100.0f, 100.f, 100.f);
+	ShadowDecal->SetRelativeLocation(FVector(0.f, 0.f, -88.f));
+	ShadowDecal->SetVisibility(false);
+
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//Camera Default Setting
 
 	//SpringArm and Camera Setting
@@ -43,7 +49,6 @@ AKallari::AKallari()
 	{
 		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);
 	}
-
 
 
 	//Animation Setting
@@ -225,6 +230,19 @@ void AKallari::AttackEnd()
 	bCanNextCombo = false;
 	bIsComboInputOn = false;
 	iCurrentCombo = 0;
+}
+
+void AKallari::Skill1(bool OnOff)
+{
+	if (OnOff) {
+		GetMesh()->SetVisibility(false);
+		ShadowDecal->SetVisibility(true);
+	}
+	else
+	{
+		GetMesh()->SetVisibility(true);
+		ShadowDecal->SetVisibility(false);
+	}
 }
 
 

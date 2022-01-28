@@ -18,6 +18,7 @@ void AKallariController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Attack"), EInputEvent::IE_Pressed, this, &AKallariController::Attack);
 	InputComponent->BindAction(TEXT("Dash"), EInputEvent::IE_Pressed, this, &AKallariController::DashStart);
 	InputComponent->BindAction(TEXT("Evade"), EInputEvent::IE_Pressed, this, &AKallariController::Evade);
+	InputComponent->BindAction(TEXT("Skill1"), EInputEvent::IE_Pressed, this, &AKallariController::Skill1);
 
 	InputComponent->BindAction(TEXT("Dash"), EInputEvent::IE_Released, this, &AKallariController::DashEnd);
 
@@ -115,6 +116,18 @@ void AKallariController::Evade()
 			MyCharacter->Evade();
 		}
 	
+}
+
+void AKallariController::Skill1()
+{
+	bIsUsingSkill = !bIsUsingSkill;
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->Skill1(bIsUsingSkill);
+	}
 }
 
 

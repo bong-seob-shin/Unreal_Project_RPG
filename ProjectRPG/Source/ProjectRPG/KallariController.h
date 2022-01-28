@@ -35,10 +35,13 @@ private:
 	void Jump();
 	void Attack();
 	void Evade();
-
+	void Skill1();
 
 private:
 
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess=true))
 	bool bIsAttacking = false;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsUsingSkill = false;
 };

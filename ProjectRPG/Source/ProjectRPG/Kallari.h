@@ -32,6 +32,7 @@ public:
 	void Evade();
 	bool Attack(bool IsAttack);
 	void AttackEnd();
+	void Skill1(bool OnOff);
 private:
 	void Dash(float DeltaTime);
 	void AttackStartComboState();
@@ -43,6 +44,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere)
+	UDecalComponent* ShadowDecal;
 
 	UPROPERTY()
 	class UKallariAnimInstance* AnimInstance;
