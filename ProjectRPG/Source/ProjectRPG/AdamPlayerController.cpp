@@ -52,7 +52,8 @@ void AAdamPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction(TEXT("Attack"), IE_Pressed, this, &AAdamPlayerController::Attack);
 
-
+	InputComponent->BindAction(TEXT("WeaponAbility"), IE_Pressed, this, &AAdamPlayerController::UseWeaponAbility);
+	InputComponent->BindAction(TEXT("WeaponAbility"), IE_Released, this, &AAdamPlayerController::StopWeaponAbility);
 }
 
 void AAdamPlayerController::MoveFB(float NewAxisValue)
@@ -129,6 +130,24 @@ void AAdamPlayerController::Attack()
 		MyCharacter->Attack();
 	}
 }
+
+void AAdamPlayerController::UseWeaponAbility()
+{
+	if (MyCharacter)
+	{
+		MyCharacter->UseWeaponAbility();
+	}
+}
+
+void AAdamPlayerController::StopWeaponAbility()
+{
+	if (MyCharacter)
+	{
+		MyCharacter->StopWeaponAbility();
+	}
+}
+
+
 
 
 

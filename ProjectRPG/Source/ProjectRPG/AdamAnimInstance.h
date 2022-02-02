@@ -27,6 +27,9 @@ public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	void SetDeadAnim() { bIsDead = true; }
 	void SetSprintAnim(bool bPressedShift) { bIsSprinting = bPressedShift; }
+	void SetUsingShieldAnim(bool bPressedRightClick) { bUsingShield = bPressedRightClick; }
+	void SetAimingArrowAnim(bool bPressedRightClick) { bAimingArrow = bPressedRightClick; }
+
 private:
 	// 칼 콤보공격 체크 애님 노티파이
 	UFUNCTION()
@@ -54,7 +57,12 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool bIsSprinting; // toggle shift
 
+	// 무기에 따라 다른 특수기능 - state machine으로 처리
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bUsingShield; // right click
 	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bAimingArrow; // right click
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
 	UAnimMontage* AttackMontage;

@@ -35,6 +35,8 @@ private:
 	void Sprint();
 	void StopSprinting();
 	void Attack();
+	void UseWeaponAbility();
+	void StopWeaponAbility();
 
 	
 private:

@@ -4,6 +4,13 @@
 
 #include "EngineMinimal.h"
 DECLARE_LOG_CATEGORY_EXTERN(PalaceWorld, Log, All);
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	E_SWORDSHIELD UMETA(DisplayName = "SwordShield"),
+	E_BOW UMETA(DisplayName = "Bow")
+};
 /**
  * 
  */

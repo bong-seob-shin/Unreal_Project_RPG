@@ -8,12 +8,6 @@
 #include "AdamCharacter.generated.h"
 
 
-UENUM(BlueprintType)
-enum class EWeaponType : uint8
-{
-	E_SWORDSHIELD UMETA(DisplayName = "SwordShield"),
-	E_BOW UMETA(DisplayName = "Bow")
-};
 
 
 UCLASS()
@@ -38,8 +32,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	
 	
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
@@ -50,6 +42,8 @@ public:
 	// shift키-달리기
 	void Sprint(); 
 	void StopSprinting();
+	void UseWeaponAbility(); // 무기 특수기능. 무기 따라 다르게
+	void StopWeaponAbility();
 
 private:
 	UFUNCTION()

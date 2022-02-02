@@ -190,6 +190,30 @@ void AAdamCharacter::StopSprinting()
 
 }
 
+void AAdamCharacter::UseWeaponAbility()
+{
+	if (CurWeaponType == EWeaponType::E_SWORDSHIELD) // 방패막기
+	{
+		AdamAnim->SetUsingShieldAnim(true);
+	}
+	else if (CurWeaponType == EWeaponType::E_BOW)
+	{
+		AdamAnim->SetAimingArrowAnim(true);
+	}
+}
+
+void AAdamCharacter::StopWeaponAbility()
+{
+	if (CurWeaponType == EWeaponType::E_SWORDSHIELD) // 방패막기
+	{
+		AdamAnim->SetUsingShieldAnim(false);
+	}
+	else if (CurWeaponType == EWeaponType::E_BOW)
+	{
+		AdamAnim->SetAimingArrowAnim(false);
+	}
+}
+
 void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (bIsAttacking) {
