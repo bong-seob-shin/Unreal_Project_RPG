@@ -31,19 +31,21 @@ void AKallariController::SetupInputComponent()
 
 void AKallariController::Updown(float Value)
 {
-	if (!bIsAttacking) {
-		APawn* const MyPawn = GetPawn();
-		MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X), Value);
+	if (bIsAttacking) return;
 
-	}
+	APawn* const MyPawn = GetPawn();
+	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X), Value);
+
+	
 }
 
 void AKallariController::LeftRight(float Value)
 {
-	if (!bIsAttacking) {
-		APawn* const MyPawn = GetPawn();
-		MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
-	}
+	if (bIsAttacking) return;
+
+	APawn* const MyPawn = GetPawn();
+	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
+	
 }
 
 void AKallariController::Horizontal(float Value)
@@ -61,6 +63,8 @@ void AKallariController::Vertical(float Value)
 
 void AKallariController::DashStart()
 {
+	if (bIsUsingSkill) return;
+
 	APawn* const MyPawn = GetPawn();
 	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
@@ -84,6 +88,9 @@ void AKallariController::DashEnd()
 
 void AKallariController::Jump()
 {
+
+	if (bIsUsingSkill) return;
+
 	APawn* const MyPawn = GetPawn();
 	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
@@ -95,6 +102,8 @@ void AKallariController::Jump()
 
 void AKallariController::Attack()
 {
+	if (bIsUsingSkill) return;
+
 	APawn* const MyPawn = GetPawn();
 	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
@@ -107,20 +116,22 @@ void AKallariController::Attack()
 
 void AKallariController::Evade()
 {
-	
-		APawn* const MyPawn = GetPawn();
-		AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+	if (bIsUsingSkill) return;
 
-		if (MyCharacter != nullptr)
-		{
-			MyCharacter->Evade();
-		}
-	
+	APawn* const MyPawn = GetPawn();
+	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+
+	if (MyCharacter != nullptr)
+	{
+		MyCharacter->Evade();
+	}
+
 }
 
 void AKallariController::OnSkill1()
 {
 	bIsUsingSkill = !bIsUsingSkill;
+
 	APawn* const MyPawn = GetPawn();
 	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
