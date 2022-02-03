@@ -23,9 +23,7 @@ AKallari::AKallari()
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 	ShadowDecal->SetupAttachment(GetCapsuleComponent());
-	ShadowDecal->DecalSize = FVector(100.0f, 100.f, 100.f);
-	ShadowDecal->SetRelativeLocation(FVector(0.f, 0.f, -88.f));
-	ShadowDecal->SetVisibility(false);
+	
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//Camera Default Setting
 
@@ -50,6 +48,16 @@ AKallari::AKallari()
 		GetMesh()->SetSkeletalMesh(SkeletalMesh.Object);
 	}
 
+	//Decal Setting
+	static ConstructorHelpers::FObjectFinder<UMaterial> SkillDecalMaterial(TEXT("Material'/Game/PolarWorld/Materials/M_SkillDecal.M_SkillDecal'"));
+
+	if (SkillDecalMaterial.Succeeded())
+	{
+		ShadowDecal->SetDecalMaterial(SkillDecalMaterial.Object);
+	}
+	ShadowDecal->DecalSize = FVector(50.0f, 50.f, 50.f);
+	ShadowDecal->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(-90.f,0.0f,0.f));
+	ShadowDecal->SetVisibility(false);
 
 	//Animation Setting
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -105,6 +113,7 @@ void AKallari::PostInitializeComponents()
 		});
 
 		AnimInstance->OnAttackHitCheck.AddUObject(this, &AKallari::AttackCheck);
+		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1);
 	}
 
 
@@ -232,9 +241,14 @@ void AKallari::AttackEnd()
 	iCurrentCombo = 0;
 }
 
-void AKallari::Skill1(bool OnOff)
+void AKallari::OnSkill1(bool OnOff)
 {
-	if (OnOff) {
+	AnimInstance->SetIsSkill_1_Playing(OnOff);
+}
+
+void AKallari::Skill1()
+{
+	if (AnimInstance->GetIsSkill_1_Playing()) {
 		GetMesh()->SetVisibility(false);
 		ShadowDecal->SetVisibility(true);
 	}

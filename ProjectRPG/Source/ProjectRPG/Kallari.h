@@ -32,8 +32,9 @@ public:
 	void Evade();
 	bool Attack(bool IsAttack);
 	void AttackEnd();
-	void Skill1(bool OnOff);
+	void OnSkill1(bool OnOff);
 private:
+	void Skill1();
 	void Dash(float DeltaTime);
 	void AttackStartComboState();
 	void AttackCheck();

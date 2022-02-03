@@ -35,7 +35,7 @@ private:
 	void Jump();
 	void Attack();
 	void Evade();
-	void Skill1();
+	void OnSkill1();
 
 private:
 

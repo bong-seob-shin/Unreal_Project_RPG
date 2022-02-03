@@ -53,6 +53,16 @@ bool UKallariAnimInstance::GetIsEvading()
 	return bIsEvading;
 }
 
+void UKallariAnimInstance::SetIsSkill_1_Playing(bool IsSkillPlaying)
+{
+	bIsSkill_1_Playing = IsSkillPlaying;
+}
+
+bool UKallariAnimInstance::GetIsSkill_1_Playing()
+{
+	return bIsSkill_1_Playing;
+}
+
 void UKallariAnimInstance::AnimNotify_AttackHit()
 {
 	OnAttackHitCheck.Broadcast();
@@ -66,6 +76,11 @@ void UKallariAnimInstance::AnimNotify_NextAttackCheck()
 void UKallariAnimInstance::AnimNotify_EvadeEnd()
 {
 	bIsEvading = false;
+}
+
+void UKallariAnimInstance::AnimNotify_Skill1()
+{
+	OnSkill1.Broadcast();
 }
 
 FName UKallariAnimInstance::GetAttackMontageSection(int32 index)
