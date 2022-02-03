@@ -55,7 +55,7 @@ AKallari::AKallari()
 	{
 		ShadowDecal->SetDecalMaterial(SkillDecalMaterial.Object);
 	}
-	ShadowDecal->DecalSize = FVector(50.0f, 50.f, 50.f);
+	ShadowDecal->DecalSize = FVector(100.0f, 100.f, 100.f);
 	ShadowDecal->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(-90.f,0.0f,0.f));
 	ShadowDecal->SetVisibility(false);
 
