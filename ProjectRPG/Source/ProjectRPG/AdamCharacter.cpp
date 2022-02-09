@@ -55,6 +55,10 @@ AAdamCharacter::AAdamCharacter()
 		GetMesh()->SetSkeletalMesh(SK_ADAM.Object);
 	}
 
+	// 등에 무기 스태틱 메쉬들 세팅
+	FName BowBackSocket(TEXT("WeaponBackMount_rSocket")); 
+
+
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> ADAM_ANIM(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamAnimBP.AdamAnimBP_C"));
@@ -148,8 +152,22 @@ void AAdamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+void AAdamCharacter::MoveFB(float NewAxisValue)
+{
+	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()))
+		AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), NewAxisValue);
+}
+
+void AAdamCharacter::MoveLR(float NewAxisValue)
+{
+	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()))
+		AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), NewAxisValue);
+}
+
 void AAdamCharacter::Attack()
 {
+	if (AdamAnim->GetbIsSprinting())
+		StopSprinting();
 	if (bIsAttacking)
 	{
 		if (FMath::IsWithinInclusive<int32>(CurrentCombo, 1, MaxCombo))
@@ -171,11 +189,14 @@ void AAdamCharacter::Attack()
 
 void AAdamCharacter::Sprint()
 {
-	if (GetVelocity().Size() != 0.0f) {
-		GetCharacterMovement()->MaxAcceleration = 521.f;
-		//GetCharacterMovement()->BrakingDecelerationWalking = 521.f;
-		GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed * 2;
-		AdamAnim->SetSprintAnim(true);
+	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()))
+	{
+		if (GetVelocity().Size() != 0.0f) {
+			GetCharacterMovement()->MaxAcceleration = 521.f;
+			//GetCharacterMovement()->BrakingDecelerationWalking = 521.f;
+			GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed * 2;
+			AdamAnim->SetSprintAnim(true);
+		}
 	}
 }
 
@@ -192,13 +213,17 @@ void AAdamCharacter::StopSprinting()
 
 void AAdamCharacter::UseWeaponAbility()
 {
-	if (CurWeaponType == EWeaponType::E_SWORDSHIELD) // 방패막기
-	{
-		AdamAnim->SetUsingShieldAnim(true);
-	}
-	else if (CurWeaponType == EWeaponType::E_BOW)
-	{
-		AdamAnim->SetAimingArrowAnim(true);
+	if (!bIsAttacking) {
+		if (CurWeaponType == EWeaponType::E_SWORDSHIELD) // 방패막기
+		{
+			if (AdamAnim->GetbIsSprinting())
+				StopSprinting();
+			AdamAnim->SetUsingShieldAnim(true);
+		}
+		else if (CurWeaponType == EWeaponType::E_BOW)
+		{
+			AdamAnim->SetAimingArrowAnim(true);
+		}
 	}
 }
 

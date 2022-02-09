@@ -22,6 +22,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override; // tick
 	void PlayAttackMontage(); // 무기에 따라 다르게 할 예정
 	void JumpToAttackMontageSection(int32 NewSection); // 칼 콤보공격
+
 public:
 	FOnNextAttackCheckDelegate OnNextAttackCheck;
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
@@ -29,6 +30,9 @@ public:
 	void SetSprintAnim(bool bPressedShift) { bIsSprinting = bPressedShift; }
 	void SetUsingShieldAnim(bool bPressedRightClick) { bUsingShield = bPressedRightClick; }
 	void SetAimingArrowAnim(bool bPressedRightClick) { bAimingArrow = bPressedRightClick; }
+	bool GetbUsingShield() { return bUsingShield; }
+	bool GetbAimingArrow() { return bAimingArrow; }
+	bool GetbIsSprinting() { return bIsSprinting; }
 
 private:
 	// 칼 콤보공격 체크 애님 노티파이
@@ -66,8 +70,6 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
 	UAnimMontage* AttackMontage;
-
-	
 
 
 };

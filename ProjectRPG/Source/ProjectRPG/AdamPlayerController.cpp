@@ -60,7 +60,7 @@ void AAdamPlayerController::MoveFB(float NewAxisValue)
 {
 	if (MyCharacter && NewAxisValue != 0.0f)
 	{
-		MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), NewAxisValue);
+		MyCharacter->MoveFB(NewAxisValue);
 	}
 
 
@@ -70,7 +70,7 @@ void AAdamPlayerController::MoveLR(float NewAxisValue)
 {
 	if (MyCharacter && NewAxisValue != 0.0f)
 	{
-		MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), NewAxisValue);
+		MyCharacter->MoveLR(NewAxisValue);
 	}
 }
 

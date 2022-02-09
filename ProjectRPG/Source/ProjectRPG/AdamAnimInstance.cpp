@@ -16,6 +16,7 @@ UAdamAnimInstance::UAdamAnimInstance()
 	// ·£´ý Á×À½ ¾Ö´Ï¸ÞÀÌ¼Ç ÀÎµ¦½º ¼¼ÆÃ
 	RandDeathAnimIdx = FMath::RandRange(0, 1);
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
+	
 	if (ATTACK_MTG.Succeeded())
 	{
 		AttackMontage = ATTACK_MTG.Object;

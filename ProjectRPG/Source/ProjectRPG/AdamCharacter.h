@@ -33,11 +33,25 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
+	UStaticMeshComponent* Bow;
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
+	UStaticMeshComponent* Quiver; // 화살통
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
+	UStaticMeshComponent* Scabbard; // 칼집
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
+	UStaticMeshComponent* Sword; // 칼집에 넣은 칼
+
+
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* Camera;
+
+	// 상하좌우 이동
+	void MoveFB(float NewAxisValue);
+	void MoveLR(float NewAxisValue);
 	void Attack(); // 기본공격. 나중에 무기 따라 다르게
 	// shift키-달리기
 	void Sprint(); 
