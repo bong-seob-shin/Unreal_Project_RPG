@@ -33,6 +33,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	// 등 뒤 무기 스태틱메쉬들
 	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
 	UStaticMeshComponent* Bow;
 	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
@@ -41,7 +42,8 @@ public:
 	UStaticMeshComponent* Scabbard; // 칼집
 	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
 	UStaticMeshComponent* Sword; // 칼집에 넣은 칼
-
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
+	UStaticMeshComponent* Shield; // 칼집에 넣은 칼
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
@@ -58,8 +60,13 @@ public:
 	void StopSprinting();
 	void UseWeaponAbility(); // 무기 특수기능. 무기 따라 다르게
 	void StopWeaponAbility();
+	// 숫자키 : 무기 전환
+	void SwordAndShieldMode();
+	void BowMode();
 
 private:
+	//void LoadStaticMeshInConstructor(UStaticMeshComponent* SMComponent,FName SocketName, FName ComponentName, UStaticMesh* mesh);
+
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
@@ -68,6 +75,7 @@ private:
 	void AttackEndComboState();
 	// 칼 공격 탐지
 	void AttackCheck();
+	
 
 private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // 현재 무기 타입
@@ -94,6 +102,8 @@ private:
 
 	UPROPERTY()
 	class UAdamAnimInstance* AdamAnim;
+
+	
 
 	// 캐릭터 무브먼트 관련 기본값들
 	const float fWalkSpeed = 300.f;

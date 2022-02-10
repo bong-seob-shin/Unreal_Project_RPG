@@ -37,6 +37,8 @@ private:
 	void Attack();
 	void UseWeaponAbility();
 	void StopWeaponAbility();
+	void SwordAndShieldMode();
+	void BowMode();
 
 	
 private:

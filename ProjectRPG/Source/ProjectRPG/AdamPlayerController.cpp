@@ -54,6 +54,11 @@ void AAdamPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction(TEXT("WeaponAbility"), IE_Pressed, this, &AAdamPlayerController::UseWeaponAbility);
 	InputComponent->BindAction(TEXT("WeaponAbility"), IE_Released, this, &AAdamPlayerController::StopWeaponAbility);
+
+	// 무기전환 : 숫자키
+	InputComponent->BindAction(TEXT("SwordAndShieldMode"), IE_Pressed, this, &AAdamPlayerController::Jump);
+	InputComponent->BindAction(TEXT("BowMode"), IE_Pressed, this, &AAdamPlayerController::Jump);
+
 }
 
 void AAdamPlayerController::MoveFB(float NewAxisValue)
@@ -145,6 +150,18 @@ void AAdamPlayerController::StopWeaponAbility()
 	{
 		MyCharacter->StopWeaponAbility();
 	}
+}
+
+void AAdamPlayerController::SwordAndShieldMode()
+{
+	if (MyCharacter)
+	{
+		MyCharacter
+	}
+}
+
+void AAdamPlayerController::BowMode()
+{
 }
 
 

@@ -56,8 +56,72 @@ AAdamCharacter::AAdamCharacter()
 	}
 
 	// 등에 무기 스태틱 메쉬들 세팅
-	FName BowBackSocket(TEXT("WeaponBackMount_rSocket")); 
+	FName BowBackSocket(TEXT("weaponMount_back_lSocket")); 
+	FName QuiverBackSocket(TEXT("weaponMount_back_rSocket"));
+	FName ScabbardBackSocket(TEXT("weaponMount_back_rScabbard"));
+	FName SwordBackSocket(TEXT("weaponMount_back_rSword"));
+	FName ShieldBackSocket(TEXT("ShieldMount_backSocket"));
 
+	if (GetMesh()->DoesSocketExist(BowBackSocket))
+	{
+		Bow = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BOW"));
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_BOW(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Bow.SM_Adam_Bow"));
+		if (SM_BOW.Succeeded())
+		{
+			Bow->SetStaticMesh(SM_BOW.Object);
+
+		}
+		Bow->SetupAttachment(GetMesh(), BowBackSocket);
+	}
+
+	if (GetMesh()->DoesSocketExist(QuiverBackSocket))
+	{
+		Quiver = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("QUIVER"));
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_QUIVER(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Quiver.SM_Adam_Quiver"));
+		if (SM_QUIVER.Succeeded())
+		{
+			Quiver->SetStaticMesh(SM_QUIVER.Object);
+
+		}
+		Quiver->SetupAttachment(GetMesh(), QuiverBackSocket);
+	}
+
+	if (GetMesh()->DoesSocketExist(ScabbardBackSocket))
+	{
+		Scabbard = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SCABBARD"));
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SCABBARD(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Scabbard.SM_Adam_Scabbard"));
+		if (SM_SCABBARD.Succeeded())
+		{
+			Scabbard->SetStaticMesh(SM_SCABBARD.Object);
+
+		}
+		Scabbard->SetupAttachment(GetMesh(), ScabbardBackSocket);
+	}
+	
+	if (GetMesh()->DoesSocketExist(SwordBackSocket))
+	{
+		Sword = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SWORD"));
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SWORD(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Sword.SM_Adam_Sword"));
+		if (SM_SWORD.Succeeded())
+		{
+			Sword->SetStaticMesh(SM_SWORD.Object);
+
+		}
+		Sword->SetupAttachment(GetMesh(), SwordBackSocket);
+	}
+	
+	if (GetMesh()->DoesSocketExist(ShieldBackSocket))
+	{
+		Shield = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SHIELD"));
+		static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SHIELD(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Shield.SM_Adam_Shield"));
+		if (SM_SHIELD.Succeeded())
+		{
+			Shield->SetStaticMesh(SM_SHIELD.Object);
+
+		}
+		Shield->SetupAttachment(GetMesh(), ShieldBackSocket);
+	}
+	
 
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
@@ -68,7 +132,9 @@ AAdamCharacter::AAdamCharacter()
 	}
 
 	
-
+	// 기본 무기 소드앤실드 -> 등에는 안보이게
+	Sword->SetVisibility(false);
+	Shield->SetVisibility(false);
 }
 
 // Called when the game starts or when spawned
@@ -95,6 +161,7 @@ void AAdamCharacter::BeginPlay()
 			}
 		}
 	}
+
 }
 
 // Called every frame
@@ -238,6 +305,30 @@ void AAdamCharacter::StopWeaponAbility()
 		AdamAnim->SetAimingArrowAnim(false);
 	}
 }
+
+void AAdamCharacter::SwordAndShieldMode()
+{
+	if (CurWeaponType == EWeaponType::E_SWORDSHIELD)
+		return;
+	static ConstructorHelpers::FObjectFinder<UAnimationAsset> S_TOOKOUT(TEXT("AnimSequence'/Game/PalaceWorld/Resources/Adam_Adventurer/Animations/Adam/WeaponAndShield/AM_TookWeaponOut.AM_TookWeaponOut'"));
+	GetMesh()->PlayAnimation(S_TOOKOUT.Object, false);
+}
+
+void AAdamCharacter::BowMode()
+{
+}
+
+//void AAdamCharacter::LoadStaticMeshInConstructor(UStaticMeshComponent* SMComponent, FName SocketName, FName ComponentName, UStaticMesh* mesh)
+//{
+//	if (GetMesh()->DoesSocketExist(SocketName))
+//	{
+//		SMComponent = CreateDefaultSubobject<UStaticMeshComponent>(ComponentName);
+//		
+//		SMComponent->SetStaticMesh(mesh);
+//		
+//		SMComponent->SetupAttachment(GetMesh(), SocketName);
+//	}
+//}
 
 void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
