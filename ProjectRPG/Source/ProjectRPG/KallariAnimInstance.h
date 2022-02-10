@@ -31,6 +31,8 @@ public:
 
 	void SetIsSkill_1_Playing(bool IsSkillPlaying);
 	bool GetIsSkill_1_Playing();
+
+	void SetIsDead(bool bInIsDead);
 private:
 	UFUNCTION()
 	void AnimNotify_AttackHit();
@@ -64,6 +66,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
 	bool bIsSkill_1_Playing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
+	bool bIsDead;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;

@@ -27,6 +27,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	void DashStart();
 	void DashEnd();
 	void Evade();
@@ -49,8 +51,15 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UDecalComponent* ShadowDecal;
 
+	UPROPERTY(VisibleAnywhere, Category = CUI)
+	class UWidgetComponent* HPBarWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+	class UKallariStatComponent* CharacterStat;
+
 	UPROPERTY()
 	class UKallariAnimInstance* AnimInstance;
+
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float fAttackRange;

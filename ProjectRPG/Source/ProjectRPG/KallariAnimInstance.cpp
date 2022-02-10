@@ -15,6 +15,9 @@ UKallariAnimInstance::UKallariAnimInstance()
 		AttackMontage = sAtackMontage.Object;
 	}
 
+	bIsFalling = false;
+	bIsDead = false;
+
 }
 
 void UKallariAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -23,7 +26,9 @@ void UKallariAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	auto Pawn = TryGetPawnOwner();
 
-	if (IsValid(Pawn))
+	if (!IsValid(Pawn)) return;
+
+	if (!bIsDead)
 	{
 		fCurrentSpeed = Pawn->GetVelocity().Size();
 
@@ -61,6 +66,11 @@ void UKallariAnimInstance::SetIsSkill_1_Playing(bool IsSkillPlaying)
 bool UKallariAnimInstance::GetIsSkill_1_Playing()
 {
 	return bIsSkill_1_Playing;
+}
+
+void UKallariAnimInstance::SetIsDead(bool bInIsDead)
+{
+	bIsDead = bInIsDead;
 }
 
 void UKallariAnimInstance::AnimNotify_AttackHit()

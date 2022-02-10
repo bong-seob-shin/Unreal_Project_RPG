@@ -8,7 +8,10 @@
 #include "KallariController.h"
 #include "DrawDebugHelpers.h"
 #include "Components/PrimitiveComponent.h"
+#include "KallariStatComponent.h"
 #include "Components/DecalComponent.h"
+#include "Components/WidgetComponent.h"
+#include "KallariWidget.h"
 
 // Sets default values
 AKallari::AKallari()
@@ -20,10 +23,13 @@ AKallari::AKallari()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	ShadowDecal = CreateDefaultSubobject<UDecalComponent>(TEXT("Decal"));
+	CharacterStat = CreateDefaultSubobject<UKallariStatComponent>(TEXT("CHARACTERSTAT"));
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
+
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 	ShadowDecal->SetupAttachment(GetCapsuleComponent());
-	
+	HPBarWidget->SetupAttachment(GetMesh());
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//Camera Default Setting
 
@@ -68,6 +74,17 @@ AKallari::AKallari()
 		GetMesh()->SetAnimInstanceClass(KallariAnim.Class);
 	}
 
+	//HPBar Setting
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("WidgetBlueprint'/Game/PolarWorld/UI/WBP_HPBar.WBP_HPBar_C'"));
+
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+	}
+
 
 	//Collision Setting
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Kallari"));
@@ -87,6 +104,12 @@ AKallari::AKallari()
 void AKallari::BeginPlay()
 {
 	Super::BeginPlay();
+
+	auto CharacterWidget = Cast<UKallariWidget>(HPBarWidget->GetUserWidgetObject());
+
+	if (CharacterWidget != nullptr)
+		CharacterWidget->BindCharacterStat(CharacterStat);
+
 }
 
 void AKallari::PostInitializeComponents()
@@ -116,6 +139,11 @@ void AKallari::PostInitializeComponents()
 		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1);
 	}
 
+	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
+
+			AnimInstance->SetIsDead(true);
+			SetActorEnableCollision(false);
+		});
 
 }
 
@@ -125,6 +153,15 @@ void AKallari::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	Dash(DeltaTime);
+}
+
+float AKallari::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	CharacterStat->SetDamage(Damage);
+
+	return Damage;
 }
 
 void AKallari::DashStart()
@@ -229,6 +266,8 @@ void AKallari::AttackCheck()
 	{
 		if (HitResult.Actor.IsValid())
 		{
+			FDamageEvent DamageEvent;
+			HitResult.Actor->TakeDamage(CharacterStat->GetAttack(), DamageEvent, GetController(), this);
 			UE_LOG(LogTemp, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 		}
 	}
@@ -249,11 +288,13 @@ void AKallari::OnSkill1(bool OnOff)
 void AKallari::Skill1()
 {
 	if (AnimInstance->GetIsSkill_1_Playing()) {
+		SetCanBeDamaged(false); // can't be damaged
 		GetMesh()->SetVisibility(false);
 		ShadowDecal->SetVisibility(true);
 	}
 	else
 	{
+		SetCanBeDamaged(true);// can be damaged
 		GetMesh()->SetVisibility(true);
 		ShadowDecal->SetVisibility(false);
 	}
