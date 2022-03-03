@@ -14,11 +14,11 @@ class PROJECTRPG_API UGruxAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
-    //UGruxAnimInstance();
-    //virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+    UGruxAnimInstance();
+    virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 
 private:
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Kallari, Meta = (AllowPrivateAccess = true))
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grux, Meta = (AllowPrivateAccess = true))
     float fCurrentSpeed;
 };

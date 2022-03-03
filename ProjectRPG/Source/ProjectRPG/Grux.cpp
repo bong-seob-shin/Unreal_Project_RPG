@@ -3,6 +3,8 @@
 
 #include "Grux.h"
 #include "GruxAIController.h"
+#include "GruxAnimInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AGrux::AGrux()
@@ -23,6 +25,20 @@ AGrux::AGrux()
 	//AIController Setting
 	AIControllerClass = AGruxAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	//Animation Setting
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	static ConstructorHelpers::FClassFinder<UGruxAnimInstance> GruxAnim(TEXT("AnimBlueprint'/Game/PolarWorld/BP_PolarWorld/ABP_Grux.ABP_Grux_C'"));
+	if (GruxAnim.Succeeded())
+	{
+		GetMesh()->SetAnimInstanceClass(GruxAnim.Class);
+	}
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 
 }
 

@@ -14,5 +14,20 @@ class PROJECTRPG_API AGruxAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+public:
+	AGruxAIController();
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
+
+	static const FName StartPosKey;
+	static const FName PatrolPosKey;
+	static const FName TargetKey;
+
+private:
+	UPROPERTY()
+	class UBehaviorTree* BehaviorTree;
+
+	UPROPERTY()
+	class UBlackboardData* BlackboardData;
 
 };
