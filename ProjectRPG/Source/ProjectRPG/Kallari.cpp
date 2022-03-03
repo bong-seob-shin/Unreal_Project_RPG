@@ -31,7 +31,7 @@ AKallari::AKallari()
 	ShadowDecal->SetupAttachment(GetCapsuleComponent());
 	HPBarWidget->SetupAttachment(GetMesh());
 
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//Camera Default Setting
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//mesh loacte CapsuleCollider
 
 	//SpringArm and Camera Setting
 	SpringArm->TargetArmLength = 500.0f;
