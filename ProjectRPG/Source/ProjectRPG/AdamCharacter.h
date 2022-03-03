@@ -44,6 +44,15 @@ public:
 	UStaticMeshComponent* Sword; // 칼집에 넣은 칼
 	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
 	UStaticMeshComponent* Shield; // 칼집에 넣은 칼
+	
+	// 사용하는 무기 액터
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Use)
+	class AAdamWeaponSword* Weapon_Sword;
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Use)
+	class AAdamWeaponShield* Weapon_Shield;
+	UPROPERTY(VisibleAnywhere, Category = Weapon_Use)
+	class AAdamWeaponBow* Weapon_Bow;
+
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;
@@ -70,11 +79,16 @@ private:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+	// 칼로 무기 전환 
+	void SwordTookOutCheck();
+	// 활로 무기 전환
+	void BowTookOutCheck();
 	// 칼 공격 콤보
 	void AttackStartComboState();
 	void AttackEndComboState();
 	// 칼 공격 탐지
 	void AttackCheck();
+	
 	
 
 private:
@@ -102,7 +116,6 @@ private:
 
 	UPROPERTY()
 	class UAdamAnimInstance* AdamAnim;
-
 	
 
 	// 캐릭터 무브먼트 관련 기본값들

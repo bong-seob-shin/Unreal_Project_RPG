@@ -6,6 +6,7 @@
 #include "AdamPlayerController.h"
 #include "AdamWeaponSword.h"
 #include "AdamWeaponShield.h"
+#include "AdamWeaponBow.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -142,26 +143,33 @@ void AAdamCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
+	//if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
 		// 무기 소켓에 무기 장착
 		FName WeaponSocket(TEXT("WeaponHandMount_rSocket")); // 공통 무기 소켓
-		auto CurWeapon = GetWorld()->SpawnActor<AAdamWeaponSword>(FVector::ZeroVector, FRotator::ZeroRotator);
-		if (nullptr != CurWeapon) {
+		Weapon_Sword = GetWorld()->SpawnActor<AAdamWeaponSword>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (nullptr != Weapon_Sword) {
 			if (GetMesh()->DoesSocketExist(WeaponSocket))
 			{
-				CurWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
+				Weapon_Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocket);
 			}
 		}
 		FName ShieldSocket(TEXT("ShieldMountSocket")); // 쉴드 소켓
-		auto shield = GetWorld()->SpawnActor<AAdamWeaponShield>(FVector::ZeroVector, FRotator::ZeroRotator);
-		if (nullptr != shield) {
+		Weapon_Shield = GetWorld()->SpawnActor<AAdamWeaponShield>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (nullptr != Weapon_Shield) {
 			if (GetMesh()->DoesSocketExist(ShieldSocket))
 			{
-				shield->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
+				Weapon_Shield->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ShieldSocket);
 			}
 		}
-	}
-
+	//}
+		FName BowSocket(TEXT("WeaponHandMount_lSocket")); // 활 소켓
+		Weapon_Bow = GetWorld()->SpawnActor<AAdamWeaponBow>(FVector::ZeroVector, FRotator::ZeroRotator);
+		if (nullptr != Weapon_Bow) {
+			if (GetMesh()->DoesSocketExist(BowSocket))
+			{
+				Weapon_Bow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, BowSocket); // Default Visibility = false
+			}
+		}
 }
 
 // Called every frame
@@ -193,6 +201,12 @@ void AAdamCharacter::PostInitializeComponents()
 
 	// 칼 공격 충돌 처리 델리게이트
 	AdamAnim->OnAttackHitCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
+
+	// 무기 전환 처리 델리게이트
+	AdamAnim->OnSwordTookOutCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
+	AdamAnim->OnBowTookOutCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
+	
+
 }
 void AAdamCharacter::PossessedBy(AController* NewController)
 {
@@ -310,12 +324,18 @@ void AAdamCharacter::SwordAndShieldMode()
 {
 	if (CurWeaponType == EWeaponType::E_SWORDSHIELD)
 		return;
-	static ConstructorHelpers::FObjectFinder<UAnimationAsset> S_TOOKOUT(TEXT("AnimSequence'/Game/PalaceWorld/Resources/Adam_Adventurer/Animations/Adam/WeaponAndShield/AM_TookWeaponOut.AM_TookWeaponOut'"));
-	GetMesh()->PlayAnimation(S_TOOKOUT.Object, false);
+	SwordTookOutCheck();
+	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_SWORDSHIELD);
+	CurWeaponType = EWeaponType::E_SWORDSHIELD;
 }
 
 void AAdamCharacter::BowMode()
 {
+	if (CurWeaponType == EWeaponType::E_BOW)
+		return;
+	BowTookOutCheck();
+	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_BOW);
+	CurWeaponType = EWeaponType::E_BOW;
 }
 
 //void AAdamCharacter::LoadStaticMeshInConstructor(UStaticMeshComponent* SMComponent, FName SocketName, FName ComponentName, UStaticMesh* mesh)
@@ -339,6 +359,26 @@ void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupt
 		}
 	}
 	
+}
+
+void AAdamCharacter::SwordTookOutCheck() // 델리게이트 함수
+{
+	Bow->SetVisibility(true);
+	Sword->SetVisibility(false);
+	Shield->SetVisibility(false);
+	Weapon_Bow->Weapon_BowMesh->SetVisibility(false);
+	Weapon_Sword->Weapon_SwordMesh->SetVisibility(true);
+	Weapon_Shield->Weapon_ShieldMesh->SetVisibility(true);
+}
+
+void AAdamCharacter::BowTookOutCheck()
+{
+	Bow->SetVisibility(false);
+	Sword->SetVisibility(true);
+	Shield->SetVisibility(true);
+	Weapon_Bow->Weapon_BowMesh->SetVisibility(true);
+	Weapon_Sword->Weapon_SwordMesh->SetVisibility(false);
+	Weapon_Shield->Weapon_ShieldMesh->SetVisibility(false);
 }
 
 void AAdamCharacter::AttackStartComboState()

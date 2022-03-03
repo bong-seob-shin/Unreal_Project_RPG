@@ -16,11 +16,23 @@ UAdamAnimInstance::UAdamAnimInstance()
 	// ·£´ý Á×À½ ¾Ö´Ï¸ÞÀÌ¼Ç ÀÎµ¦½º ¼¼ÆÃ
 	RandDeathAnimIdx = FMath::RandRange(0, 1);
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
-	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> CHANGETO_SWORD_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/SS_WeaponOutMTG.SS_WeaponOutMTG"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> CHANGETO_BOW_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/B_WeaponOutMTG.B_WeaponOutMTG"));
+
+
 	if (ATTACK_MTG.Succeeded())
 	{
 		AttackMontage = ATTACK_MTG.Object;
 	}
+	if (CHANGETO_SWORD_MTG.Succeeded())
+	{
+		ChangeToSwordMontage = CHANGETO_SWORD_MTG.Object;
+	}
+	if (CHANGETO_BOW_MTG.Succeeded())
+	{
+		ChangeToBowMontage = CHANGETO_BOW_MTG.Object;
+	}
+	
 }
 
 
@@ -51,6 +63,18 @@ void UAdamAnimInstance::PlayAttackMontage()
 		Montage_Play(AttackMontage, 1.0f);
 }
 
+void UAdamAnimInstance::PlayChangeWeaponMontage(EWeaponType nextWeapon)
+{
+	if (nextWeapon == EWeaponType::E_SWORDSHIELD)
+	{
+		Montage_Play(ChangeToSwordMontage, 1.0f);
+	}
+	else if (nextWeapon == EWeaponType::E_BOW)
+	{
+		Montage_Play(ChangeToBowMontage, 1.0f);
+	}
+}
+
 void UAdamAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 {
 	if (!bIsDead)
@@ -60,6 +84,16 @@ void UAdamAnimInstance::JumpToAttackMontageSection(int32 NewSection)
 			Montage_JumpToSection(GetAttackMontageSectionName(NewSection), AttackMontage);
 		}
 	}
+}
+
+void UAdamAnimInstance::AnimNotify_TookOutSword()
+{
+	OnSwordTookOutCheck.Broadcast();
+}
+
+void UAdamAnimInstance::AnimNotify_TookOutBow()
+{
+	OnBowTookOutCheck.Broadcast();
 }
 
 void UAdamAnimInstance::AnimNotify_AttackHitCheck()

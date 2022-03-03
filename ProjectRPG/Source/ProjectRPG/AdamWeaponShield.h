@@ -25,5 +25,5 @@ public:
 public:
 	// 방패 메쉬
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	UStaticMeshComponent* Weapon_Shield;
+	UStaticMeshComponent* Weapon_ShieldMesh;
 };

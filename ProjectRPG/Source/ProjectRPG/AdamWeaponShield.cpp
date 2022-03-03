@@ -7,14 +7,14 @@
 AAdamWeaponShield::AAdamWeaponShield()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-	Weapon_Shield = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON_SHIELD")); // Ä® ½ºÅÂÆ½ ¸Þ½¬
+	PrimaryActorTick.bCanEverTick = false;
+	Weapon_ShieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON_SHIELD")); // Ä® ½ºÅÂÆ½ ¸Þ½¬
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SHIELD(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Shield.SM_Adam_Shield"));
 	if (SM_SHIELD.Succeeded())
 	{
-		Weapon_Shield->SetStaticMesh(SM_SHIELD.Object);
+		Weapon_ShieldMesh->SetStaticMesh(SM_SHIELD.Object);
 	}
-	Weapon_Shield->SetCollisionProfileName(TEXT("NoCollision"));
+	Weapon_ShieldMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
 // Called when the game starts or when spawned

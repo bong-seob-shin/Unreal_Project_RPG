@@ -2,18 +2,18 @@
 
 #pragma once
 
-#include "PalaceWorld.h"
+#include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "AdamWeaponSword.generated.h"
+#include "AdamWeaponBow.generated.h"
 
 UCLASS()
-class PROJECTRPG_API AAdamWeaponSword : public AActor
+class PROJECTRPG_API AAdamWeaponBow : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AAdamWeaponSword();
+	AAdamWeaponBow();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,9 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 public:
-
-public:
-	// 칼 메쉬
+	// 활 메쉬
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	UStaticMeshComponent* Weapon_SwordMesh;
+	USkeletalMeshComponent* Weapon_BowMesh;
 };

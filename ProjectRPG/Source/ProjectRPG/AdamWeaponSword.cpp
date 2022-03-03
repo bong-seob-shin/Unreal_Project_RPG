@@ -9,13 +9,13 @@ AAdamWeaponSword::AAdamWeaponSword()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Weapon_Sword = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON_SWORD")); // Ä® ½ºÅÂÆ½ ¸Þ½¬
+	Weapon_SwordMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WEAPON_SWORD")); // Ä® ½ºÅÂÆ½ ¸Þ½¬
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_SWORD(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/SM_Adam_Sword.SM_Adam_Sword"));
 	if (SM_SWORD.Succeeded())
 	{
-		Weapon_Sword->SetStaticMesh(SM_SWORD.Object);
+		Weapon_SwordMesh->SetStaticMesh(SM_SWORD.Object);
 	}
-	Weapon_Sword->SetCollisionProfileName(TEXT("NoCollision"));
+	Weapon_SwordMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 
 }
