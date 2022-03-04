@@ -56,7 +56,7 @@ void UKallariStatComponent::SetDamage(float NewDamage)
 		return;
 
 	SetHP(FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHp));
-	if (CurrentHP <= 0.0f)
+	if (CurrentHP <= KINDA_SMALL_NUMBER)
 	{
 		OnHPIsZero.Broadcast();
 	}

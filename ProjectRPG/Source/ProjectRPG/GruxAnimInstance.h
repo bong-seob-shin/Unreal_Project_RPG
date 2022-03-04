@@ -22,6 +22,7 @@ public:
 
     void PlayAttackAnim();
 
+    void SetIsDead(bool IsDead);
 
 private:
     UFUNCTION()
@@ -33,4 +34,7 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grux, Meta = (AllowPrivateAccess = true))
     bool bIsAttacking;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grux, Meta = (AllowPrivateAccess = true))
+    bool bIsDead;
 };

@@ -68,9 +68,9 @@ bool UKallariAnimInstance::GetIsSkill_1_Playing()
 	return bIsSkill_1_Playing;
 }
 
-void UKallariAnimInstance::SetIsDead(bool bInIsDead)
+void UKallariAnimInstance::SetIsDead(bool IsDead)
 {
-	bIsDead = bInIsDead;
+	bIsDead = IsDead;
 }
 
 void UKallariAnimInstance::AnimNotify_AttackHit()

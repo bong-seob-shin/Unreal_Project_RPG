@@ -32,7 +32,7 @@ public:
 	void SetIsSkill_1_Playing(bool IsSkillPlaying);
 	bool GetIsSkill_1_Playing();
 
-	void SetIsDead(bool bInIsDead);
+	void SetIsDead(bool IsDead);
 private:
 	UFUNCTION()
 	void AnimNotify_AttackHit();

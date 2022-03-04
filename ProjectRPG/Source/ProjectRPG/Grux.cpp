@@ -8,6 +8,7 @@
 #include "DrawDebugHelpers.h"
 #include "Components/PrimitiveComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AGrux::AGrux()
@@ -50,6 +51,10 @@ AGrux::AGrux()
 	//Character Setting
 	fAttackRange = 100.0f;
 	fAttackRadius = 50.0f;
+	fMaxHP = 30.0f;
+	fCurrentHP = fMaxHP;
+	fAttackDamage = 10.0f;
+
 }
 
 // Called when the game starts or when spawned
@@ -117,10 +122,25 @@ void AGrux::AttackCheck()
 		if (HitResult.Actor.IsValid())
 		{
 			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(10.0f, DamageEvent, GetController(), this);
+			HitResult.Actor->TakeDamage(fAttackDamage, DamageEvent, GetController(), this);
 			UE_LOG(LogTemp, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 		}
 	}
+}
+
+float AGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	fCurrentHP -= Damage;
+
+	if (fCurrentHP <= KINDA_SMALL_NUMBER)
+	{
+		auto AnimInstance = Cast<UGruxAnimInstance>(GetMesh()->GetAnimInstance());
+		AnimInstance->SetIsDead(true);
+		SetActorEnableCollision(false);
+	}
+	return Damage;
 }
 
 

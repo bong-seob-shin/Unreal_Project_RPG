@@ -8,6 +8,7 @@
 UGruxAnimInstance::UGruxAnimInstance()
 {
 	bIsAttacking = false;
+	bIsDead = false;
 }
 
 void UGruxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -24,6 +25,11 @@ void UGruxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 void UGruxAnimInstance::PlayAttackAnim()
 {
 	bIsAttacking = true;
+}
+
+void UGruxAnimInstance::SetIsDead(bool IsDead)
+{
+	bIsDead = IsDead;
 }
 
 void UGruxAnimInstance::AnimNotify_AttackEnd()
