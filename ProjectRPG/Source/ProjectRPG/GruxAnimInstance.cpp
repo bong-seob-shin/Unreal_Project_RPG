@@ -3,10 +3,11 @@
 
 
 #include "GruxAnimInstance.h"
+#include "Grux.h"
 
 UGruxAnimInstance::UGruxAnimInstance()
 {
-
+	bIsAttacking = false;
 }
 
 void UGruxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -18,4 +19,21 @@ void UGruxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!IsValid(Pawn)) return;
 
 	fCurrentSpeed = Pawn->GetVelocity().Size();
+}
+
+void UGruxAnimInstance::PlayAttackAnim()
+{
+	bIsAttacking = true;
+}
+
+void UGruxAnimInstance::AnimNotify_AttackEnd()
+{
+	bIsAttacking = false;
+	auto Pawn = TryGetPawnOwner();
+
+	if (!IsValid(Pawn)) return;
+
+	auto Grux = Cast<AGrux>(Pawn);
+	if(Grux != nullptr)
+		Grux->OnAttackEnd.Broadcast();
 }

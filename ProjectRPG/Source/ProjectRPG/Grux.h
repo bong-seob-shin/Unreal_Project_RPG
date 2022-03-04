@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "Grux.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
+
+
 UCLASS()
 class PROJECTRPG_API AGrux : public ACharacter
 {
@@ -14,21 +17,28 @@ class PROJECTRPG_API AGrux : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AGrux();
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	void Attack();
 private:
-	UPROPERTY()
-	class UGruxAnimInstance* AnimInstance;
+	void AttackCheck();
 
+public:
+	FOnAttackEnd OnAttackEnd;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float fAttackRange;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float fAttackRadius;
 };
