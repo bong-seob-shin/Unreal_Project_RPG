@@ -10,6 +10,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Classes//Particles//ParticleSystem.h"
+#include "AuroraStatComponent.h"
 
 // Sets default values
 AAuroraCharacter::AAuroraCharacter()
@@ -28,6 +29,9 @@ AAuroraCharacter::AAuroraCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	CharacterStat = CreateDefaultSubobject<UAuroraStatComponent>(TEXT("CHARACTERSTAT"));
+
 
 	// Load SkeletalMesh
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SM(TEXT("SkeletalMesh'/Game/IceLandWorld/ParagonAurora/Characters/Heroes/Aurora/Meshes/Aurora.Aurora'"));
@@ -95,6 +99,11 @@ void AAuroraCharacter::PostInitializeComponents()
 
 		AuroraAnimInstance->OnAttackMeleeHitCheck.AddUObject(this, &AAuroraCharacter::AttackMeleeCheck);
 	}
+
+	CharacterStat->OnHpIsZero.AddLambda([this]()->void {
+		AuroraAnimInstance->SetDeadAnimation();
+		SetActorEnableCollision(false);
+		});
 }
 
 // Called every frame
@@ -115,6 +124,8 @@ float AAuroraCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 		AuroraAnimInstance->SetDeadAnimation();
 		SetActorEnableCollision(false);
 	}
+
+	CharacterStat->SetDamage(FinalDamage); 
 	return FinalDamage;
 }
 
@@ -175,7 +186,7 @@ void AAuroraCharacter::AttackMeleeCheck()
 	if (bResult && HitResult.Actor.IsValid())
 	{
 		FDamageEvent DamageEvent;
-		HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this);
+		HitResult.Actor->TakeDamage(CharacterStat->GetAttack(), DamageEvent, GetController(), this);
 	}
 }
 

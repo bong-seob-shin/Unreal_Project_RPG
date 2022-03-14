@@ -70,4 +70,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = FX, meta = (AllowPrivateAccess = true))
 	UParticleSystem* AttackHitParticle;
+
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+	class UAuroraStatComponent* CharacterStat;
 };
