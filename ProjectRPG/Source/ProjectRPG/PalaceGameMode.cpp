@@ -10,3 +10,10 @@ APalaceGameMode::APalaceGameMode()
 	DefaultPawnClass = AAdamCharacter::StaticClass();
 	PlayerControllerClass = AAdamPlayerController::StaticClass();
 }
+
+AAdamObjectPool* APalaceGameMode::GetActorPool()
+{
+	if (!ActorPool)
+		ActorPool = Cast<AAdamObjectPool>(GetWorld()->SpawnActor(ActorPoolClass));
+	return nullptr;
+}

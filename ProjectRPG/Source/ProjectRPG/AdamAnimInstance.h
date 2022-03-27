@@ -85,7 +85,7 @@ private:
 	// 몽타주들
 	// SwordAndShield
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
-	UAnimMontage* AttackMontage;
+	UAnimMontage* AttackMontage; // 좌클릭 기본공격
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = WeaponChange, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
 	UAnimMontage* ChangeToSwordMontage;
@@ -93,4 +93,7 @@ private:
 	// Bow
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = WeaponChange, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
 	UAnimMontage* ChangeToBowMontage;
+	
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = WeaponChange, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
+	UAnimMontage* BowAttackMontage; // 좌클릭 기본공격
 };

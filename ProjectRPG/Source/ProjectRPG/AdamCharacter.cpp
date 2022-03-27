@@ -203,8 +203,8 @@ void AAdamCharacter::PostInitializeComponents()
 	AdamAnim->OnAttackHitCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
 
 	// 무기 전환 처리 델리게이트
-	AdamAnim->OnSwordTookOutCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
-	AdamAnim->OnBowTookOutCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
+	AdamAnim->OnSwordTookOutCheck.AddUObject(this, &AAdamCharacter::SwordTookOutCheck);
+	AdamAnim->OnBowTookOutCheck.AddUObject(this, &AAdamCharacter::BowTookOutCheck);
 	
 
 }
@@ -324,7 +324,6 @@ void AAdamCharacter::SwordAndShieldMode()
 {
 	if (CurWeaponType == EWeaponType::E_SWORDSHIELD)
 		return;
-	SwordTookOutCheck();
 	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_SWORDSHIELD);
 	CurWeaponType = EWeaponType::E_SWORDSHIELD;
 }
@@ -333,7 +332,6 @@ void AAdamCharacter::BowMode()
 {
 	if (CurWeaponType == EWeaponType::E_BOW)
 		return;
-	BowTookOutCheck();
 	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_BOW);
 	CurWeaponType = EWeaponType::E_BOW;
 }

@@ -15,14 +15,19 @@ UAdamAnimInstance::UAdamAnimInstance()
 	bAimingArrow = false;
 	// ·£´ý Á×À½ ¾Ö´Ï¸ÞÀÌ¼Ç ÀÎµ¦½º ¼¼ÆÃ
 	RandDeathAnimIdx = FMath::RandRange(0, 1);
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORDATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> BOWATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamBowBasicAttackMTG.AdamBowBasicAttackMTG"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> CHANGETO_SWORD_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/SS_WeaponOutMTG.SS_WeaponOutMTG"));
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> CHANGETO_BOW_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/B_WeaponOutMTG.B_WeaponOutMTG"));
 
 
-	if (ATTACK_MTG.Succeeded())
+	if (SWORDATTACK_MTG.Succeeded())
 	{
-		AttackMontage = ATTACK_MTG.Object;
+		AttackMontage = SWORDATTACK_MTG.Object;
+	}
+	if (BOWATTACK_MTG.Succeeded())
+	{
+		BowAttackMontage = BOWATTACK_MTG.Object;
 	}
 	if (CHANGETO_SWORD_MTG.Succeeded())
 	{
@@ -33,6 +38,7 @@ UAdamAnimInstance::UAdamAnimInstance()
 		ChangeToBowMontage = CHANGETO_BOW_MTG.Object;
 	}
 	
+
 }
 
 
