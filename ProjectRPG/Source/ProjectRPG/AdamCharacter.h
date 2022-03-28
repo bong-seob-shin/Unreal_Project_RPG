@@ -53,6 +53,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Weapon_Use)
 	class AAdamWeaponBow* Weapon_Bow;
 
+	// 화살 오브젝트 풀
+	class AAdamObjectPool* ArrowPool;
+	
+	UPROPERTY(EditDefaultsOnly, Category = Arrow)
+	TSubclassOf<class AAdamArrow> ArrowClass; // 스폰할때 쓸 화살 클래스
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	USpringArmComponent* SpringArm;

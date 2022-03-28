@@ -15,11 +15,11 @@ class PROJECTRPG_API APalaceGameMode : public AGameModeBase
 	GENERATED_BODY()
 public:
 	APalaceGameMode();
-	class AAdamObjectPool* GetActorPool();
+	class AAdamObjectPool* GetObjectPool();
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true))
-	TSubclassOf<AAdamObjectPool> ActorPoolClass;
+	TSubclassOf<AAdamObjectPool> ObjectPoolClass;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
-	AAdamObjectPool* ActorPool;
+	AAdamObjectPool* ObjectPool;
 };

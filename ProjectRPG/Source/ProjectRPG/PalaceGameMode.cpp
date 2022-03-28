@@ -4,6 +4,7 @@
 #include "PalaceGameMode.h"
 #include "AdamCharacter.h"
 #include "AdamPlayerController.h"
+#include "AdamObjectPool.h"
 
 APalaceGameMode::APalaceGameMode() 
 {
@@ -11,9 +12,10 @@ APalaceGameMode::APalaceGameMode()
 	PlayerControllerClass = AAdamPlayerController::StaticClass();
 }
 
-AAdamObjectPool* APalaceGameMode::GetActorPool()
+
+AAdamObjectPool* APalaceGameMode::GetObjectPool()
 {
-	if (!ActorPool)
-		ActorPool = Cast<AAdamObjectPool>(GetWorld()->SpawnActor(ActorPoolClass));
-	return nullptr;
+	if (!ObjectPool)
+		ObjectPool = Cast<AAdamObjectPool>(GetWorld()->SpawnActor(ObjectPoolClass));
+	return ObjectPool;
 }

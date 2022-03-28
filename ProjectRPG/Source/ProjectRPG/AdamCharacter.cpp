@@ -7,6 +7,8 @@
 #include "AdamWeaponSword.h"
 #include "AdamWeaponShield.h"
 #include "AdamWeaponBow.h"
+#include "AdamObjectPool.h"
+#include "PalaceGameMode.h"
 #include "DrawDebugHelpers.h"
 
 // Sets default values
@@ -36,6 +38,7 @@ AAdamCharacter::AAdamCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.0f; // 점프 높이 조정
 	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
 	GetCharacterMovement()->BrakingDecelerationWalking = fDeceleration;
+
 
 	// 무기 타입 디폴트 : 칼,방패
 	CurWeaponType = EWeaponType::E_SWORDSHIELD;
@@ -142,7 +145,11 @@ AAdamCharacter::AAdamCharacter()
 void AAdamCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// 화살 오브젝트 풀 초기화
+	ArrowPool = CastChecked<APalaceGameMode>(GetGameInstance())->GetObjectPool();
+
+
 	//if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
 		// 무기 소켓에 무기 장착
 		FName WeaponSocket(TEXT("WeaponHandMount_rSocket")); // 공통 무기 소켓

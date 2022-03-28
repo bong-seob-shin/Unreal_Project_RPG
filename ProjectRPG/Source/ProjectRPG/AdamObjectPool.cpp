@@ -16,7 +16,13 @@ AAdamObjectPool::AAdamObjectPool()
 void AAdamObjectPool::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	for (int i = 0; i < ExpandSize; ++i)
+	{
+		AAdamArrow* PoolableActor = GetWorld()->SpawnActor<AAdamArrow>(PooledObjectSubClass, FVector().ZeroVector, FRotator().ZeroRotator);
+		PoolableActor->SetActive(false);
+		Pool.Push(PoolableActor);
+	}
+	PoolSize += ExpandSize;
 }
 
 // Called every frame
@@ -28,9 +34,9 @@ void AAdamObjectPool::Tick(float DeltaTime)
 
 AAdamArrow* AAdamObjectPool::GetPooledObject()
 {
-	if (pool.Num() == 0)
+	if (Pool.Num() == 0)
 		Expand();
-	return pool.Pop();
+	return Pool.Pop();
 }
 
 void AAdamObjectPool::Expand()
@@ -39,13 +45,13 @@ void AAdamObjectPool::Expand()
 	{
 		AAdamArrow* PoolableActor = GetWorld()->SpawnActor<AAdamArrow>(PooledObjectSubClass, FVector().ZeroVector, FRotator().ZeroRotator);
 		PoolableActor->SetActive(false);
-		pool.Push(PoolableActor);
+		Pool.Push(PoolableActor);
 	}
 	PoolSize += ExpandSize;
 }
 
 void AAdamObjectPool::ReturnObject(AAdamArrow* ReturnObject)
 {
-	pool.Push(ReturnObject);
+	Pool.Push(ReturnObject);
 }
 

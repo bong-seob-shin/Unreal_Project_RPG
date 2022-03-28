@@ -23,14 +23,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 public:
-	class AAdamArrow* GetPooledObject();
-	void Expand();
-	void ReturnObject(class AAdamArrow* ReturnObject);
+	class AAdamArrow* GetPooledObject(); // 오브젝트 풀에서 관리하는 오브젝트를 하나 반환하는 함수
+	void Expand(); // 오브젝트 풀에 반환 가능한 객체가 더 이상 없을 경우 오브젝트 풀을 확장(객체 늘림)하는 함수
+	void ReturnObject(class AAdamArrow* ReturnObject); // 오브젝트 풀에 반환된 객체를 오브젝트 풀에 추가하는 함수
 public:
-	TSubclassOf<class AAdamArrow> PooledObjectSubClass;
-	int32 PoolSize = 0;
-	int32 ExpandSize = 10;
+	TSubclassOf<class AAdamArrow> PooledObjectSubClass; // 관리할 오브젝트 클래스
+	int32 PoolSize = 0; // 오브젝트 풀 기본 크기
+	int32 ExpandSize = 10; // 오브젝트 풀 확장 크기
 private:
-	TArray<class AAdamArrow*> pool;
+	TArray<class AAdamArrow*> Pool; // 오브젝트 풀
 
 };

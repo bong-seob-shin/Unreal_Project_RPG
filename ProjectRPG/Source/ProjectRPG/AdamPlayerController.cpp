@@ -23,7 +23,6 @@ void AAdamPlayerController::OnPossess(APawn* aPawn)
 	Super::OnPossess(aPawn); // 빙의를 진행하는 시점 
 	MyCharacter = Cast<AAdamCharacter>(GetCharacter());
 	
-	
 }
 
 void AAdamPlayerController::BeginPlay()
