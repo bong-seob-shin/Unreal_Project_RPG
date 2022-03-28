@@ -46,9 +46,9 @@ AGrux::AGrux()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
 
 	//Collsion Setting
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Kallari"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 
-	//Character Setting
+	//Stat Setting
 	fAttackRange = 100.0f;
 	fAttackRadius = 50.0f;
 	fMaxHP = 30.0f;
@@ -71,12 +71,6 @@ void AGrux::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void AGrux::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
 
 void AGrux::Attack()
 {
@@ -95,7 +89,7 @@ void AGrux::AttackCheck()
 		GetActorLocation(),
 		GetActorLocation() + GetActorForwardVector() * fAttackRange,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
+		ECollisionChannel::ECC_GameTraceChannel4,
 		FCollisionShape::MakeSphere(fAttackRadius),
 		Params
 	);
@@ -128,6 +122,12 @@ void AGrux::AttackCheck()
 	}
 }
 
+void AGrux::Dead()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DEAD!!"));
+	Destroy();
+}
+
 float AGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -139,6 +139,8 @@ float AGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 		auto AnimInstance = Cast<UGruxAnimInstance>(GetMesh()->GetAnimInstance());
 		AnimInstance->SetIsDead(true);
 		SetActorEnableCollision(false);
+		GetWorldTimerManager().SetTimer(DieTimerHandle, this, &AGrux::Dead, 10.0f, false, 5.0f);
+		UnPossessed();
 	}
 	return Damage;
 }

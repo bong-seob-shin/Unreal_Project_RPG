@@ -89,7 +89,7 @@ AKallari::AKallari()
 	//Collision Setting
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Kallari"));
 
-	//Character Setting
+	//Stat Setting
 	iMaxCombo = 5;
 	fWalkSpeed = 400.0f; 
 	fDashSpeed = fWalkSpeed * 2.0f;

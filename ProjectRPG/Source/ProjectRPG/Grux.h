@@ -26,13 +26,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	void Attack();
 private:
 	void AttackCheck();
 
+	void Dead();
 	
 public:
 	FOnAttackEnd OnAttackEnd;
@@ -56,7 +54,7 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float fAttackRadius;
 
-
+	FTimerHandle DieTimerHandle;
 
 };
 

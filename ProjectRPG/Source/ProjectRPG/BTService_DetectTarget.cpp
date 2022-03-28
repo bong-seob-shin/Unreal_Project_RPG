@@ -34,7 +34,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		OverlapResults,
 		Center,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
+		ECollisionChannel::ECC_GameTraceChannel4,
 		FCollisionShape::MakeSphere(DetectRadius),
 		CollisionParams
 	);
@@ -44,7 +44,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	{
 		for (auto const& OverlapResult : OverlapResults)
 		{
-			AKallari* Character = Cast<AKallari>(OverlapResult.GetActor());
+			AKallari* const Character = Cast<AKallari>(OverlapResult.GetActor());
 			if (Character != nullptr && Character->GetController()->IsPlayerController()) //this CrossCheck increase accuracy
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AGruxAIController::TargetKey, Character);
