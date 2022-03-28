@@ -29,12 +29,23 @@ void AKallariController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("Vertical"), this, &AKallariController::Vertical);
 }
 
+void AKallariController::OnPossess(APawn* aPawn)
+{
+	Super::OnPossess(aPawn);
+	MyCharacter = Cast<AKallari>(aPawn);
+}
+
+void AKallariController::OnUnPossess()
+{
+	MyCharacter = nullptr;
+}
+
 void AKallariController::Updown(float Value)
 {
 	if (bIsAttacking) return;
+	if (MyCharacter == nullptr || MyCharacter->GetIsDead())	return;
 
-	APawn* const MyPawn = GetPawn();
-	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X), Value);
+	MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X), Value);
 
 	
 }
@@ -42,89 +53,70 @@ void AKallariController::Updown(float Value)
 void AKallariController::LeftRight(float Value)
 {
 	if (bIsAttacking) return;
+	if (MyCharacter == nullptr || MyCharacter->GetIsDead())	return;
 
-	APawn* const MyPawn = GetPawn();
-	MyPawn->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
+	MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
 	
 }
 
 void AKallariController::Horizontal(float Value)
 {
-	APawn* const MyPawn = GetPawn();
-	MyPawn->AddControllerYawInput(Value);
+	if (MyCharacter == nullptr || MyCharacter->GetIsDead())	return;
+
+	MyCharacter->AddControllerYawInput(Value);
 }
 
 void AKallariController::Vertical(float Value)
 {
-	APawn* const MyPawn = GetPawn();
-	MyPawn->AddControllerPitchInput(Value);
-	
+	if (MyCharacter == nullptr || MyCharacter->GetIsDead())	return;
+
+	MyCharacter->AddControllerPitchInput(Value);	
 }
 
 void AKallariController::DashStart()
 {
 	if (bIsUsingSkill) return;
+	if (MyCharacter == nullptr) return;
 
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+	MyCharacter->DashStart();
 
-
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->DashStart();
-	}
 }
 
 void AKallariController::DashEnd()
 {
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+	if (MyCharacter == nullptr) return;
 
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->DashEnd();
-	}
+	MyCharacter->DashEnd();
+
 }
 
 void AKallariController::Jump()
 {
-
 	if (bIsUsingSkill) return;
+	if (MyCharacter == nullptr) return;
 
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+	MyCharacter->Jump();
 
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->Jump();
-	}
 }
 
 void AKallariController::Attack()
 {
 	if (bIsUsingSkill) return;
+	if (MyCharacter == nullptr) return;
 
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
+	bIsAttacking = MyCharacter->Attack(bIsAttacking);
 
-	if (MyCharacter != nullptr)
-	{
-		bIsAttacking = MyCharacter->Attack(bIsAttacking);
-	}
 
 }
 
 void AKallariController::Evade()
 {
 	if (bIsUsingSkill) return;
+	if (MyCharacter == nullptr) return;
 
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->Evade();
-	}
+	MyCharacter->Evade();
+
 
 }
 
@@ -132,24 +124,20 @@ void AKallariController::OnSkill1()
 {
 	bIsUsingSkill = !bIsUsingSkill;
 
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->OnSkill1(bIsUsingSkill);
-	}
+	if (MyCharacter == nullptr) return;
+
+	MyCharacter->OnSkill1(bIsUsingSkill);
+
 }
 
 
 void AKallariController::OnAttackMontageEnded(UAnimMontage* Montage, bool blnterrupted)
 {
 	bIsAttacking = false;
-	APawn* const MyPawn = GetPawn();
-	AKallari* MyCharacter = Cast<AKallari>(MyPawn);
 	
-	if (MyCharacter != nullptr)
-	{
-		MyCharacter->AttackEnd();
-	}
+	if (MyCharacter == nullptr) return;
+
+	MyCharacter->AttackEnd();
+
 }

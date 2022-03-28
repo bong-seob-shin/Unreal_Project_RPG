@@ -139,11 +139,12 @@ void AKallari::PostInitializeComponents()
 		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1);
 	}
 
+	//Character Dead , Character Stat Component -> Character  Delegate OnHpIsZero
 	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
-
-			AnimInstance->SetIsDead(true);
-			SetActorEnableCollision(false);
-		});
+		AnimInstance->SetIsDead(true);
+		SetActorEnableCollision(false);
+		bIsDead = true;
+	});
 
 }
 
@@ -283,6 +284,11 @@ void AKallari::AttackEnd()
 void AKallari::OnSkill1(bool OnOff)
 {
 	AnimInstance->SetIsSkill_1_Playing(OnOff);
+}
+
+bool AKallari::GetIsDead()
+{
+	return bIsDead;
 }
 
 void AKallari::Skill1()

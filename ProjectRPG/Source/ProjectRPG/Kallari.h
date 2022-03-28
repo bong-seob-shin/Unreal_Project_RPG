@@ -35,6 +35,8 @@ public:
 	bool Attack(bool IsAttack);
 	void AttackEnd();
 	void OnSkill1(bool OnOff);
+	bool GetIsDead();
+
 private:
 	void Skill1();
 	void Dash(float DeltaTime);
@@ -90,6 +92,9 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariMove, Meta = (AllowPrivateAccess = true))
 	bool bIsDash;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariStat, Meta = (AllowPrivateAccess = true))
+	bool bIsDead;
 
 	const float fSpeedIncreaseRate = 1000.0f;
 

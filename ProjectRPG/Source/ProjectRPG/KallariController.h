@@ -23,7 +23,13 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupInputComponent() override;
+
+
+	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
+
 private:
+
 
 	void Updown(float Value);
 	void LeftRight(float Value);
@@ -37,6 +43,8 @@ private:
 	void Evade();
 	void OnSkill1();
 
+
+
 private:
 
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess=true))
@@ -45,5 +53,6 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bIsUsingSkill = false;
 
-
+	UPROPERTY()
+	class AKallari* MyCharacter;
 };
