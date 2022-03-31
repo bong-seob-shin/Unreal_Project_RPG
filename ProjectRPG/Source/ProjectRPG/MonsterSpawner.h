@@ -28,9 +28,6 @@ private:
 	UPROPERTY()
 	class AGrux* Spawn_Grux;
 
-	UPROPERTY(EditAnywhere, Category = "Location")
-	FVector SpawnerLocation;
-
 	UPROPERTY(VisibleAnywhere, Category = "Capsule")
 	class USceneComponent* Body;
 
