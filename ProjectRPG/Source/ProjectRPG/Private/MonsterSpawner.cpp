@@ -13,6 +13,8 @@ AMonsterSpawner::AMonsterSpawner()
 	Body = CreateDefaultSubobject<USceneComponent>(TEXT("SpawnerTransform"));
 
 	RootComponent = Body;
+
+	SpawnTime = 30.0f;
 }
 
 // Called when the game starts or when spawned
@@ -20,7 +22,7 @@ void AMonsterSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	GetWorldTimerManager().SetTimer(SpawnTimerHandle,this, &AMonsterSpawner::SpawnGrux ,10.0f, true, 5.0f);
+	GetWorldTimerManager().SetTimer(SpawnTimerHandle,this, &AMonsterSpawner::SpawnGrux , SpawnTime, true, 5.0f);
 
 }
 

@@ -31,6 +31,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Capsule")
 	class USceneComponent* Body;
 
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	float SpawnTime;
+
 	UFUNCTION()
 	void SpawnGrux();
 

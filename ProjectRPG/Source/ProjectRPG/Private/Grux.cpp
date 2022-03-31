@@ -49,11 +49,11 @@ AGrux::AGrux()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 
 	//Stat Setting
-	fAttackRange = 100.0f;
+	fAttackRange = 70.0f;
 	fAttackRadius = 50.0f;
 	fMaxHP = 30.0f;
 	fCurrentHP = fMaxHP;
-	fAttackDamage = 10.0f;
+	fAttackDamage = 5.0f;
 
 }
 
