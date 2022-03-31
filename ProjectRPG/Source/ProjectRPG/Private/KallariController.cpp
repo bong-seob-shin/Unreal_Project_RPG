@@ -8,6 +8,9 @@
 AKallariController::AKallariController()
 {
 	PlayerCameraManagerClass = AKallariPlayerCameraManager::StaticClass();
+
+	Skill1_CoolDown_Time = 10.0f;
+	Evade_CoolDown_Time = 3.0f;
 }
 
 void AKallariController::SetupInputComponent()
@@ -37,6 +40,7 @@ void AKallariController::OnPossess(APawn* aPawn)
 
 void AKallariController::OnUnPossess()
 {
+	Super::OnUnPossess();
 	MyCharacter = nullptr;
 }
 
@@ -105,25 +109,31 @@ void AKallariController::Attack()
 	if (MyCharacter == nullptr) return;
 
 	bIsAttacking = MyCharacter->Attack(bIsAttacking);
-
-
 }
 
 void AKallariController::Evade()
 {
+	if (GetWorld()->GetTimeSeconds() - Evade_CoolDown_Calc_Sec < Evade_CoolDown_Time)
+		return;
+	Evade_CoolDown_Calc_Sec = GetWorld()->GetTimeSeconds();
+
+
 	if (bIsUsingSkill) return;
 	if (MyCharacter == nullptr) return;
 
-
 	MyCharacter->Evade();
-
 
 }
 
 void AKallariController::OnSkill1()
 {
-	bIsUsingSkill = !bIsUsingSkill;
+	if (GetWorld()->GetTimeSeconds() - Skill1_CoolDown_Calc_Sec < Skill1_CoolDown_Time)
+		return;
 
+	Skill1_CoolDown_Calc_Sec = GetWorld()->GetTimeSeconds();
+
+
+	bIsUsingSkill = !bIsUsingSkill;
 
 	if (MyCharacter == nullptr) return;
 
@@ -139,5 +149,4 @@ void AKallariController::OnAttackMontageEnded(UAnimMontage* Montage, bool blnter
 	if (MyCharacter == nullptr) return;
 
 	MyCharacter->AttackEnd();
-
 }
