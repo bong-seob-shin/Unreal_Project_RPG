@@ -7,9 +7,14 @@
 #include "AdamWeaponSword.h"
 #include "AdamWeaponShield.h"
 #include "AdamWeaponBow.h"
+#include "AdamArrow.h"
 #include "AdamObjectPool.h"
 #include "PalaceGameMode.h"
 #include "DrawDebugHelpers.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 AAdamCharacter::AAdamCharacter()
@@ -139,6 +144,7 @@ AAdamCharacter::AAdamCharacter()
 	// 기본 무기 소드앤실드 -> 등에는 안보이게
 	Sword->SetVisibility(false);
 	Shield->SetVisibility(false);
+	
 }
 
 // Called when the game starts or when spawned
@@ -147,9 +153,10 @@ void AAdamCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	// 화살 오브젝트 풀 초기화
-	ArrowPool = CastChecked<APalaceGameMode>(GetGameInstance())->GetObjectPool();
-
-
+	ArrowPool = CastChecked<APalaceGameMode>(GetWorld()->GetAuthGameMode())->GetObjectPool();
+	Bow_Arrow = ArrowPool->GetPooledObject();
+	Bow_Arrow->SetObjectPool(ArrowPool);
+	
 	//if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
 		// 무기 소켓에 무기 장착
 		FName WeaponSocket(TEXT("WeaponHandMount_rSocket")); // 공통 무기 소켓
@@ -242,13 +249,13 @@ void AAdamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AAdamCharacter::MoveFB(float NewAxisValue)
 {
-	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()))
+	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()) && !(AdamAnim->GetbAimingArrow()))
 		AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), NewAxisValue);
 }
 
 void AAdamCharacter::MoveLR(float NewAxisValue)
 {
-	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()))
+	if (!bIsAttacking && !(AdamAnim->GetbUsingShield()) && !(AdamAnim->GetbAimingArrow()))
 		AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), NewAxisValue);
 }
 
@@ -256,23 +263,46 @@ void AAdamCharacter::Attack()
 {
 	if (AdamAnim->GetbIsSprinting())
 		StopSprinting();
-	if (bIsAttacking)
-	{
-		if (FMath::IsWithinInclusive<int32>(CurrentCombo, 1, MaxCombo))
+	switch (CurWeaponType) {
+	case EWeaponType::E_SWORDSHIELD :
+		if (bIsAttacking)
 		{
-			if (bCanNextCombo)
-				bIsComboInputOn = true;
+			if (FMath::IsWithinInclusive<int32>(CurrentCombo, 1, MaxCombo))
+			{
+				if (bCanNextCombo)
+					bIsComboInputOn = true;
+			}
 		}
-	}
-	else
-	{
-		if (CurrentCombo == 0) {
-			AttackStartComboState();
-			AdamAnim->PlayAttackMontage();
-			AdamAnim->JumpToAttackMontageSection(CurrentCombo);
-			bIsAttacking = true;
+		else
+		{
+			if (CurrentCombo == 0) {
+				AttackStartComboState();
+				AdamAnim->PlayAttackMontage();
+				AdamAnim->JumpToAttackMontageSection(CurrentCombo);
+				bIsAttacking = true;
+			}
 		}
+		break;
+	case EWeaponType::E_BOW:
+		UWorld* const World = GetWorld();
+		if (World != NULL)
+		{
+			FName ArrowSocket(TEXT("ArrowSocket")); // 화살 소켓
+			if (nullptr != ArrowPool) {
+				if (GetMesh()->DoesSocketExist(ArrowSocket))
+				{
+					
+					Bow_Arrow->SetActive(true);
+					Bow_Arrow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ArrowSocket);
+					
+					
+				}
+			}
+
+		}
+		break;
 	}
+	
 }
 
 void AAdamCharacter::Sprint()
@@ -302,10 +332,10 @@ void AAdamCharacter::StopSprinting()
 void AAdamCharacter::UseWeaponAbility()
 {
 	if (!bIsAttacking) {
+		if (AdamAnim->GetbIsSprinting())
+			StopSprinting();
 		if (CurWeaponType == EWeaponType::E_SWORDSHIELD) // 방패막기
-		{
-			if (AdamAnim->GetbIsSprinting())
-				StopSprinting();
+		{	
 			AdamAnim->SetUsingShieldAnim(true);
 		}
 		else if (CurWeaponType == EWeaponType::E_BOW)

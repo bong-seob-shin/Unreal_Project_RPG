@@ -2,7 +2,8 @@
 
 
 #include "AdamAnimInstance.h"
-
+#include "GameFramework/Character.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 
 UAdamAnimInstance::UAdamAnimInstance()

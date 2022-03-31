@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "PalaceWorld.h"
 #include "GameFramework/GameModeBase.h"
 #include "PalaceGameMode.generated.h"
 

@@ -31,7 +31,14 @@ public:
 	// 화살 메쉬
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	UStaticMeshComponent* Bow_ArrowMesh;
-
+protected:
+	// 충돌 박스
+	UPROPERTY(Category = Collision, VisibleAnywhere, BlueprintReadOnly, meta =(AllowPrivateAccess = "true"))
+	class UBoxComponent* ArrowColBox;
+	
+	// 프로젝타일 컴포넌트
+	UPROPERTY(Category = Collision, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class UProjectileMovementComponent* Movement; 
 private:
 	// 오브젝트 풀링 위한 변수들
 	bool m_bIsActive; // 해당 오브젝트의 활성화 여부

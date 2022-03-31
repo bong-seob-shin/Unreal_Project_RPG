@@ -16,6 +16,6 @@ APalaceGameMode::APalaceGameMode()
 AAdamObjectPool* APalaceGameMode::GetObjectPool()
 {
 	if (!ObjectPool)
-		ObjectPool = Cast<AAdamObjectPool>(GetWorld()->SpawnActor(ObjectPoolClass));
+		ObjectPool = Cast<AAdamObjectPool>(GetWorld()->SpawnActor(AAdamObjectPool::StaticClass()));
 	return ObjectPool;
 }

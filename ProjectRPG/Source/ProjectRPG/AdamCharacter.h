@@ -55,15 +55,17 @@ public:
 
 	// 화살 오브젝트 풀
 	class AAdamObjectPool* ArrowPool;
+	// 화살 액터
+	class AAdamArrow* Bow_Arrow;
 	
 	UPROPERTY(EditDefaultsOnly, Category = Arrow)
 	TSubclassOf<class AAdamArrow> ArrowClass; // 스폰할때 쓸 화살 클래스
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	USpringArmComponent* SpringArm;
+	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	UCameraComponent* Camera;
+	class UCameraComponent* Camera;
 
 	// 상하좌우 이동
 	void MoveFB(float NewAxisValue);
