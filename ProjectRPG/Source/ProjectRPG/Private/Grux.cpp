@@ -124,7 +124,6 @@ void AGrux::AttackCheck()
 
 void AGrux::Dead()
 {
-	UE_LOG(LogTemp, Warning, TEXT("DEAD!!"));
 	Destroy();
 }
 

@@ -37,8 +37,6 @@ void AMonsterSpawner::SpawnGrux()
 {
 	FActorSpawnParameters GruxSpawnParams;
 	FVector SpawnLocation = GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("Current Actor Pos %d, %d, %d"), SpawnLocation.X, SpawnLocation.Y, SpawnLocation.Z);
 	GetWorld()->SpawnActor(Cast<UClass>(AGrux::StaticClass()) ,&SpawnLocation, &FRotator::ZeroRotator,GruxSpawnParams);
-
 }
 
