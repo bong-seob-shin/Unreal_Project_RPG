@@ -13,6 +13,10 @@
 #include "Components/WidgetComponent.h"
 #include "KallariWidget.h"
 
+
+constexpr float SpeedIncreaseRate = 1000.0f;
+constexpr float Skill_1_duration =  5.0f; 
+
 // Sets default values
 AKallari::AKallari()
 {
@@ -136,7 +140,7 @@ void AKallari::PostInitializeComponents()
 		});
 
 		AnimInstance->OnAttackHitCheck.AddUObject(this, &AKallari::AttackCheck);
-		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1);
+		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1_Start);
 	}
 
 	//Character Dead , Character Stat Component -> Character  Delegate OnHpIsZero
@@ -174,11 +178,11 @@ void AKallari::Dash(float DeltaTime)
 {
 	if (bIsDash && GetCharacterMovement()->MaxWalkSpeed <= fDashSpeed)
 	{
-		GetCharacterMovement()->MaxWalkSpeed += fSpeedIncreaseRate * DeltaTime;
+		GetCharacterMovement()->MaxWalkSpeed += SpeedIncreaseRate * DeltaTime;
 	}
 	else if (!bIsDash && GetCharacterMovement()->MaxWalkSpeed >= fWalkSpeed)
 	{
-		GetCharacterMovement()->MaxWalkSpeed -= fSpeedIncreaseRate * DeltaTime;
+		GetCharacterMovement()->MaxWalkSpeed -= SpeedIncreaseRate * DeltaTime;
 	}
 }
 
@@ -281,9 +285,9 @@ void AKallari::AttackEnd()
 	iCurrentCombo = 0;
 }
 
-void AKallari::OnSkill1(bool OnOff)
+void AKallari::OnSkill1()
 {
-	AnimInstance->SetIsSkill_1_Playing(OnOff);
+	AnimInstance->SetIsSkill_1_Playing(!AnimInstance->GetIsSkill_1_Playing());
 }
 
 bool AKallari::GetIsDead()
@@ -291,20 +295,25 @@ bool AKallari::GetIsDead()
 	return bIsDead;
 }
 
-void AKallari::Skill1()
+void AKallari::Skill1_Start()
 {
-	if (AnimInstance->GetIsSkill_1_Playing()) {
+	if (AnimInstance->GetIsSkill_1_Playing())
+	{
 		SetCanBeDamaged(false); // can't be damaged
 		GetMesh()->SetVisibility(false);
 		ShadowDecal->SetVisibility(true);
+		GetWorldTimerManager().SetTimer(Skill_1_TimerHandle, this, &AKallari::OnSkill1, 5.0f, false, Skill_1_duration);
 	}
-	else
+	else 
 	{
 		SetCanBeDamaged(true);// can be damaged
 		GetMesh()->SetVisibility(true);
 		ShadowDecal->SetVisibility(false);
 	}
 }
+
+
+
 
 
 

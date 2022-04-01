@@ -34,11 +34,12 @@ public:
 	void Evade();
 	bool Attack(bool IsAttack);
 	void AttackEnd();
-	void OnSkill1(bool OnOff);
+	void OnSkill1();
 	bool GetIsDead();
 
 private:
-	void Skill1();
+	void Skill1_Start();
+	void Skill1_End();
 	void Dash(float DeltaTime);
 	void AttackStartComboState();
 	void AttackCheck();
@@ -96,7 +97,8 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariStat, Meta = (AllowPrivateAccess = true))
 	bool bIsDead;
 
-	const float fSpeedIncreaseRate = 1000.0f;
+
+	FTimerHandle Skill_1_TimerHandle;
 
 
 

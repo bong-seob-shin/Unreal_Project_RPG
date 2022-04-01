@@ -5,12 +5,17 @@
 #include "KallariPlayerCameraManager.h"
 #include "Kallari.h"
 
+
+constexpr float Skill1_CoolDown_Time = 10.0f;
+
+constexpr float Evade_CoolDown_Time = 3.0f;
+
 AKallariController::AKallariController()
 {
 	PlayerCameraManagerClass = AKallariPlayerCameraManager::StaticClass();
+	Evade_CoolDown_Calc_Sec = -Evade_CoolDown_Time; // first use
+	Skill1_CoolDown_Calc_Sec = -Skill1_CoolDown_Time; // first use
 
-	Skill1_CoolDown_Time = 10.0f;
-	Evade_CoolDown_Time = 3.0f;
 }
 
 void AKallariController::SetupInputComponent()
@@ -132,12 +137,9 @@ void AKallariController::OnSkill1()
 
 	Skill1_CoolDown_Calc_Sec = GetWorld()->GetTimeSeconds();
 
-
-	bIsUsingSkill = !bIsUsingSkill;
-
 	if (MyCharacter == nullptr) return;
 
-	MyCharacter->OnSkill1(bIsUsingSkill);
+	MyCharacter->OnSkill1();
 
 }
 

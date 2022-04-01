@@ -58,11 +58,8 @@ private:
 
 	UPROPERTY()
 	float Skill1_CoolDown_Calc_Sec;
-	UPROPERTY()
-	float Skill1_CoolDown_Time;
-
+	
 	UPROPERTY()
 	float Evade_CoolDown_Calc_Sec;
-	UPROPERTY()
-	float Evade_CoolDown_Time;
+	
 };
