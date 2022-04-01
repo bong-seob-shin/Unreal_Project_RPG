@@ -132,10 +132,15 @@ float AGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	fCurrentHP -= Damage;
+	auto AnimInstance = Cast<UGruxAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	if (AnimInstance == nullptr)
+		return Damage;
+
+	AnimInstance->PlayHitMontage();
 
 	if (fCurrentHP <= KINDA_SMALL_NUMBER)
 	{
-		auto AnimInstance = Cast<UGruxAnimInstance>(GetMesh()->GetAnimInstance());
 		AnimInstance->SetIsDead(true);
 		SetActorEnableCollision(false);
 		GetWorldTimerManager().SetTimer(DieTimerHandle, this, &AGrux::Dead, 10.0f, false, 5.0f); //InRate(10.0f) don't use

@@ -7,6 +7,13 @@
 #include "GruxAnimInstance.generated.h"
 
 
+UENUM(BlueprintType)
+enum class GruxHitMontageType : uint8
+{
+    Hit_1 = 0,
+    Hit_2 = 1,
+    Hit_3 = 2
+};
 
 /**
  * 
@@ -24,6 +31,8 @@ public:
 
     void SetIsDead(bool IsDead);
 
+    void PlayHitMontage();
+
 private:
     UFUNCTION()
     void AnimNotify_AttackEnd();
@@ -37,4 +46,11 @@ private:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grux, Meta = (AllowPrivateAccess = true))
     bool bIsDead;
+
+    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Hit, Meta = (AllowPrivateAccess = true))
+    UAnimMontage* HitMontage;
+
+   
 };
+
+

@@ -38,8 +38,7 @@ public:
 	bool GetIsDead();
 
 private:
-	void Skill1_Start();
-	void Skill1_End();
+	void Skill1();
 	void Dash(float DeltaTime);
 	void AttackStartComboState();
 	void AttackCheck();

@@ -35,7 +35,7 @@ AKallari::AKallari()
 	ShadowDecal->SetupAttachment(GetCapsuleComponent());
 	HPBarWidget->SetupAttachment(GetMesh());
 
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//mesh loacte CapsuleCollider
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));//mesh locate CapsuleCollider
 
 	//SpringArm and Camera Setting
 	SpringArm->TargetArmLength = 500.0f;
@@ -140,7 +140,7 @@ void AKallari::PostInitializeComponents()
 		});
 
 		AnimInstance->OnAttackHitCheck.AddUObject(this, &AKallari::AttackCheck);
-		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1_Start);
+		AnimInstance->OnSkill1.AddUObject(this, &AKallari::Skill1);
 	}
 
 	//Character Dead , Character Stat Component -> Character  Delegate OnHpIsZero
@@ -295,7 +295,7 @@ bool AKallari::GetIsDead()
 	return bIsDead;
 }
 
-void AKallari::Skill1_Start()
+void AKallari::Skill1()
 {
 	if (AnimInstance->GetIsSkill_1_Playing())
 	{
