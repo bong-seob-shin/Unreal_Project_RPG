@@ -234,11 +234,11 @@ void AKallari::AttackStartComboState()
 void AKallari::AttackCheck()
 {
 
-	FHitResult HitResult;
+	TArray<FHitResult> HitResults;
 	FCollisionQueryParams Params(NAME_None, false, this);
 
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		HitResult,
+	bool bResult = GetWorld()-> SweepMultiByChannel(
+		HitResults,
 		GetActorLocation(),
 		GetActorLocation() + GetActorForwardVector() * fAttackRange,
 		FQuat::Identity,
@@ -269,6 +269,7 @@ void AKallari::AttackCheck()
 
 	if (bResult)
 	{
+		for(auto const& HitResult : HitResults)
 		if (HitResult.Actor.IsValid())
 		{
 			FDamageEvent DamageEvent;
