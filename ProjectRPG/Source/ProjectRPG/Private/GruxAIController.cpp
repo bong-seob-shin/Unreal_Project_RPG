@@ -42,6 +42,7 @@ void AGruxAIController::OnPossess(APawn* InPawn)
 void AGruxAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
-
+	
+	UE_LOG(LogTemp, Warning, TEXT("UnPossess"));
 }
 

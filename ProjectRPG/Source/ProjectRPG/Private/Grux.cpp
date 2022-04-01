@@ -139,8 +139,8 @@ float AGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 		auto AnimInstance = Cast<UGruxAnimInstance>(GetMesh()->GetAnimInstance());
 		AnimInstance->SetIsDead(true);
 		SetActorEnableCollision(false);
-		GetWorldTimerManager().SetTimer(DieTimerHandle, this, &AGrux::Dead, 1.0f, false, 5.0f);
-	
+		GetWorldTimerManager().SetTimer(DieTimerHandle, this, &AGrux::Dead, 10.0f, false, 5.0f); //InRate(10.0f) don't use
+		Cast<AGruxAIController>(GetController())->OnUnPossess();
 	}
 	return Damage;
 }
