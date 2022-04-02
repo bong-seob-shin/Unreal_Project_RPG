@@ -103,6 +103,4 @@ private:
 
 	FTimerHandle Skill_1_TimerHandle;
 
-
-
 };

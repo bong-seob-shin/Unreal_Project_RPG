@@ -15,7 +15,7 @@ AMonsterSpawner::AMonsterSpawner()
 
 	RootComponent = Body;
 
-	SpawnTime = 30.0f;
+	SpawnTime = 20.0f;
 	MaxMonsterNum = 4;
 }
 

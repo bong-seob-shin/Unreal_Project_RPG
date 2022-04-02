@@ -102,6 +102,7 @@ AKallari::AKallari()
 	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
 	fAttackRange = 200.0f;
 	fAttackRadius = 50.0f;
+
 }
 
 // Called when the game starts or when spawned

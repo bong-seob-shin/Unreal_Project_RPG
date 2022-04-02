@@ -37,6 +37,8 @@ public:
 	FOnHPChanged OnHPChanged;
 
 private:
+	void HPRecovery();
+private:
 	struct FKallariData* CurrentStatData = nullptr;
 
 	UPROPERTY(EditInstanceOnly, Category = Stat, Meta = (AllowPrivateAcess = true))
@@ -44,5 +46,10 @@ private:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Meta = (AllowPrivateAcess = true))
 	float CurrentHP;
-		
+
+	UPROPERTY(Transient, VisibleInstanceOnly, Meta = (AllowPrivateAcess = true))
+	float Recovery_HP_Amount;
+
+	FTimerHandle HpRecoveryTimerHandle;
+
 };

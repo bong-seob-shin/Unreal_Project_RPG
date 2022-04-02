@@ -13,6 +13,7 @@ UKallariStatComponent::UKallariStatComponent()
 	bWantsInitializeComponent = true;
 	// ...
 	Level = 1;
+	Recovery_HP_Amount = 5.0f;
 }
 
 
@@ -20,6 +21,7 @@ UKallariStatComponent::UKallariStatComponent()
 void UKallariStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	GetWorld()->GetTimerManager().SetTimer(HpRecoveryTimerHandle, this, &UKallariStatComponent::HPRecovery, 10.0f, true, 0.0f);
 
 	// ...
 }
@@ -91,5 +93,19 @@ float UKallariStatComponent::GetHpRatio()
 		return 0.0f;
 
 	return (CurrentStatData->MaxHp < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / CurrentStatData->MaxHp);
+}
+
+void UKallariStatComponent::HPRecovery()
+{
+	if (CurrentStatData == nullptr)
+		return;
+
+	CurrentHP = CurrentHP + Recovery_HP_Amount;
+
+	if (CurrentHP >= CurrentStatData->MaxHp)
+	{
+		CurrentHP = CurrentStatData->MaxHp;
+	}
+	OnHPChanged.Broadcast();
 }
 
