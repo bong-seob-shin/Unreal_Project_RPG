@@ -34,6 +34,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Spawn")
 	float SpawnTime;
 
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	int8 CurrentMonsterNum; //-128~127
+	
+	UPROPERTY(VisibleAnywhere, Category = "Spawn")
+	int8 MaxMonsterNum;
+
 	UFUNCTION()
 	void SpawnGrux();
 

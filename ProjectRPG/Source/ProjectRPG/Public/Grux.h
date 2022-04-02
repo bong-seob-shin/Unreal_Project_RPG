@@ -7,7 +7,7 @@
 #include "Grux.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
-
+DECLARE_DELEGATE(FOnGruxDie);
 
 UCLASS()
 class PROJECTRPG_API AGrux : public ACharacter
@@ -25,6 +25,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	void Attack();
 private:
@@ -34,8 +35,8 @@ private:
 	
 public:
 	FOnAttackEnd OnAttackEnd;
-
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	FOnGruxDie OnGruxDie;
+	//TSharedPtr<class AMonsterSpawner> ReturnSpawner;
 
 private:
 
@@ -53,6 +54,8 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float fAttackRadius;
+
+
 
 	FTimerHandle DieTimerHandle;
 

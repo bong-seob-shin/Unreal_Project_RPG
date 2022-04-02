@@ -4,6 +4,7 @@
 #include "MonsterSpawner.h"
 #include "Grux.h"
 
+
 // Sets default values
 AMonsterSpawner::AMonsterSpawner()
 {
@@ -15,6 +16,7 @@ AMonsterSpawner::AMonsterSpawner()
 	RootComponent = Body;
 
 	SpawnTime = 30.0f;
+	MaxMonsterNum = 4;
 }
 
 // Called when the game starts or when spawned
@@ -35,8 +37,16 @@ void AMonsterSpawner::Tick(float DeltaTime)
 
 void AMonsterSpawner::SpawnGrux()
 {
+	if (MaxMonsterNum < CurrentMonsterNum)
+		return;
+
 	FActorSpawnParameters GruxSpawnParams;
 	FVector SpawnLocation = GetActorLocation();
-	GetWorld()->SpawnActor(Cast<UClass>(AGrux::StaticClass()) ,&SpawnLocation, &FRotator::ZeroRotator,GruxSpawnParams);
+	auto Grux = GetWorld()->SpawnActor(Cast<UClass>(AGrux::StaticClass()) ,&SpawnLocation, &FRotator::ZeroRotator,GruxSpawnParams);
+	CurrentMonsterNum++;
+
+	Cast<AGrux>(Grux)->OnGruxDie.BindLambda([this]()-> void{
+		CurrentMonsterNum--;
+		});
 }
 

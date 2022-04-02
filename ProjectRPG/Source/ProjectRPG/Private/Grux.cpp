@@ -9,6 +9,8 @@
 #include "Components/PrimitiveComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "MonsterSpawner.h"
+
 
 // Sets default values
 AGrux::AGrux()
@@ -30,6 +32,7 @@ AGrux::AGrux()
 	AIControllerClass = AGruxAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	
 	//Animation Setting
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
@@ -39,6 +42,7 @@ AGrux::AGrux()
 		GetMesh()->SetAnimInstanceClass(GruxAnim.Class);
 	}
 
+	
 	//Smooth Movement Setting
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
@@ -145,6 +149,7 @@ float AGrux::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 		AnimInstance->SetIsDead(true);
 		SetActorEnableCollision(false);
 		GetWorldTimerManager().SetTimer(DieTimerHandle, this, &AGrux::Dead, 10.0f, false, 5.0f); //InRate(10.0f) don't use
+		OnGruxDie.Execute();
 		Cast<AGruxAIController>(GetController())->OnUnPossess();
 	}
 	return Damage;
