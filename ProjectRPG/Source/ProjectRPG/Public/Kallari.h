@@ -36,6 +36,7 @@ public:
 	void AttackEnd();
 	void OnSkill1();
 	bool GetIsDead();
+	bool GetIsHiding();
 
 private:
 	void Skill1();
@@ -96,6 +97,8 @@ private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariStat, Meta = (AllowPrivateAccess = true))
 	bool bIsDead;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = KallariStat, Meta = (AllowPrivateAccess = true))
+	bool bIsHiding;
 
 	FTimerHandle Skill_1_TimerHandle;
 

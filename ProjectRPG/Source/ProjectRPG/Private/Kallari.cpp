@@ -296,10 +296,16 @@ bool AKallari::GetIsDead()
 	return bIsDead;
 }
 
+bool AKallari::GetIsHiding()
+{
+	return bIsHiding;
+}
+
 void AKallari::Skill1()
 {
 	if (AnimInstance->GetIsSkill_1_Playing())
 	{
+		bIsHiding = true;
 		SetCanBeDamaged(false); // can't be damaged
 		GetMesh()->SetVisibility(false);
 		ShadowDecal->SetVisibility(true);
@@ -307,6 +313,7 @@ void AKallari::Skill1()
 	}
 	else 
 	{
+		bIsHiding = false;
 		SetCanBeDamaged(true);// can be damaged
 		GetMesh()->SetVisibility(true);
 		ShadowDecal->SetVisibility(false);

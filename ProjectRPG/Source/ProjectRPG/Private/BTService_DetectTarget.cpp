@@ -45,7 +45,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		for (auto const& OverlapResult : OverlapResults)
 		{
 			AKallari* const Character = Cast<AKallari>(OverlapResult.GetActor());
-			if (Character != nullptr && Character->GetController()->IsPlayerController()) //this CrossCheck increase accuracy
+			if (Character != nullptr && Character->GetController()->IsPlayerController() &&!Character->GetIsHiding()) //this CrossCheck increase accuracy
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AGruxAIController::TargetKey, Character);
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
