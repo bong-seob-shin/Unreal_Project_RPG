@@ -52,7 +52,7 @@ void AKallariController::OnUnPossess()
 void AKallariController::Updown(float Value)
 {
 	if (bIsAttacking) return;
-	if (MyCharacter == nullptr || MyCharacter->GetIsDead())	return;
+	if (MyCharacter == nullptr || MyCharacter->GetIsDead() || MyCharacter->GetIsEvading())	return;
 
 	MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X), Value);
 
@@ -62,7 +62,7 @@ void AKallariController::Updown(float Value)
 void AKallariController::LeftRight(float Value)
 {
 	if (bIsAttacking) return;
-	if (MyCharacter == nullptr || MyCharacter->GetIsDead())	return;
+	if (MyCharacter == nullptr || MyCharacter->GetIsDead() || MyCharacter->GetIsEvading())	return;
 
 	MyCharacter->AddMovementInput(FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y), Value);
 	

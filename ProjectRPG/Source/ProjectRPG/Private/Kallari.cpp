@@ -301,6 +301,13 @@ bool AKallari::GetIsHiding()
 	return bIsHiding;
 }
 
+bool AKallari::GetIsEvading()
+{
+	if (AnimInstance == nullptr)
+		return false;
+	return AnimInstance->GetIsEvading();
+}
+
 void AKallari::Skill1()
 {
 	if (AnimInstance->GetIsSkill_1_Playing())

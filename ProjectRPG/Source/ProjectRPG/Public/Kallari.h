@@ -37,6 +37,7 @@ public:
 	void OnSkill1();
 	bool GetIsDead();
 	bool GetIsHiding();
+	bool GetIsEvading();
 
 private:
 	void Skill1();
