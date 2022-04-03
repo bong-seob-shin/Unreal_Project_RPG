@@ -11,6 +11,10 @@ DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnSwordTookOutDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnBowTookOutDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnBowAttackPickArrowDelegate);
+DECLARE_MULTICAST_DELEGATE(FOnBowAttackShootArrowDelegate);
+
+
 
 
 /**
@@ -23,7 +27,7 @@ class PROJECTRPG_API UAdamAnimInstance : public UAnimInstance
 public:
 	UAdamAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override; // tick
-	void PlayAttackMontage(); // 무기에 따라 다르게 할 예정
+	void PlayAttackMontage(EWeaponType curWeapon); // 공격 몽타주 재생
 	void PlayChangeWeaponMontage(EWeaponType nextWeapon);
 	void JumpToAttackMontageSection(int32 NewSection); // 칼 콤보공격
 
@@ -32,14 +36,19 @@ public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	FOnSwordTookOutDelegate OnSwordTookOutCheck; // 칼,방패로 무기 교체
 	FOnBowTookOutDelegate OnBowTookOutCheck; // 활로 무기 교체
+	FOnBowAttackPickArrowDelegate OnBowPickArrowCheck;
+	FOnBowAttackShootArrowDelegate OnBowShootArrowCheck;
 
 	void SetDeadAnim() { bIsDead = true; }
 	void SetSprintAnim(bool bPressedShift) { bIsSprinting = bPressedShift; }
 	void SetUsingShieldAnim(bool bPressedRightClick) { bUsingShield = bPressedRightClick; }
 	void SetAimingArrowAnim(bool bPressedRightClick) { bAimingArrow = bPressedRightClick; }
+	void SetChangingWeapon(bool bPressedNumKey) { bIsChangingWeapon = bPressedNumKey; }
 	bool GetbUsingShield() { return bUsingShield; }
 	bool GetbAimingArrow() { return bAimingArrow; }
 	bool GetbIsSprinting() { return bIsSprinting; }
+	bool GetbIsChangingWeapon() { return bIsChangingWeapon; }
+	
 
 private:
 	// 칼,방패로 무기 교체
@@ -48,6 +57,11 @@ private:
 	// 활로 무기 교체
 	UFUNCTION()
 	void AnimNotify_TookOutBow();
+	// 활 기본공격 노티파이
+	UFUNCTION()
+	void AnimNotify_PickArrow();
+	UFUNCTION()
+	void AnimNotify_ShootArrow();
 	// 칼 콤보공격 체크 애님 노티파이
 	UFUNCTION()
 	void AnimNotify_AttackHitCheck(); 
@@ -74,6 +88,10 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool bIsSprinting; // toggle shift
 
+	// 무기 전환 상태
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsChangingWeapon;
+
 	// 무기에 따라 다른 특수기능 - state machine으로 처리
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bUsingShield; // right click
@@ -81,6 +99,7 @@ private:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bAimingArrow; // right click
 
+	
 
 	// 몽타주들
 	// SwordAndShield

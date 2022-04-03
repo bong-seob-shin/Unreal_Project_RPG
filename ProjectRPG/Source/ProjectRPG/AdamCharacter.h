@@ -96,12 +96,16 @@ private:
 	// 칼 공격 탐지
 	void AttackCheck();
 	
+	// 활 기본공격 델리게이트
+	void BowAttackPickArrowCheck();
+	void BowAttackShootArrowCheck();
 	
 
 private:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // 현재 무기 타입
 	EWeaponType CurWeaponType;
 
+	// 무기 공통 공격중인지 변수
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bIsAttacking;
 

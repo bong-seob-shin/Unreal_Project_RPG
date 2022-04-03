@@ -20,26 +20,33 @@ AAdamArrow::AAdamArrow()
 		Bow_ArrowMesh->SetStaticMesh(SM_ARROW.Object);
 	}
 	
-	SetRootComponent(Bow_ArrowMesh);
-
+	Bow_ArrowMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	Bow_ArrowMesh->SetupAttachment(ArrowColBox);
+	//SetRootComponent(Bow_ArrowMesh);
 	// 충돌 프로파일 적용
 	ArrowColBox->SetCollisionProfileName(TEXT("PlayerArrow"));
 	ArrowColBox->SetBoxExtent(FVector(20.f, 20.f, 20.f));
-	ArrowColBox->SetupAttachment(Bow_ArrowMesh);
+	//ArrowColBox->SetupAttachment(Bow_ArrowMesh);
+	RootComponent = ArrowColBox;
 
 	Movement->UpdatedComponent = ArrowColBox;
-	Movement->InitialSpeed = 2000.f;
-	Movement->MaxSpeed = 2000.f;
-	Movement->bInitialVelocityInLocalSpace = true;
-	Movement->ProjectileGravityScale = 0.2f;
-	
+	Movement->InitialSpeed = 1200.f; // 2000.f
+	Movement->MaxSpeed = 1200.f;
+	Movement->bRotationFollowsVelocity = true;
+	//Movement->bShouldBounce = true;
+	//Movement->Bounciness = 0.3f;
+	//Movement->bInitialVelocityInLocalSpace = true;
+	Movement->ProjectileGravityScale = 0.5f;
+	Movement->bAutoActivate = false;
 }
 
 // Called when the game starts or when spawned
 void AAdamArrow::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	// 델리게이트에 생성한 함수 등록
+	ArrowColBox->OnComponentHit.AddDynamic(this, &AAdamArrow::OnHit);
+
 }
 
 // Called every frame
@@ -49,18 +56,53 @@ void AAdamArrow::Tick(float DeltaTime)
 
 }
 
+void AAdamArrow::ShootInDirection(const FVector& ShootDirection)
+{
+	Movement->Velocity = ShootDirection * Movement->InitialSpeed;
+}
+
 void AAdamArrow::ReturnSelf()
 {
 	if (m_ObjectPool == nullptr)
+	{
+		UE_LOG(PalaceWorld, Warning, TEXT("m_ObjectPool is NULL"));
 		return;
-	m_ObjectPool->ReturnObject(this);
+	}
 	SetActive(false);
+	m_ObjectPool->ReturnObject(this);
+	Bow_ArrowMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f)); // 메쉬 방향
+
+	//GetWorldTimerManager().ClearTimer(ArrowTimerHandle);
 }
 
 void AAdamArrow::SetActive(bool bIsActive)
 {
 	m_bIsActive = bIsActive;
 	SetActorHiddenInGame(!m_bIsActive);
-	SetActorEnableCollision(false);
+	SetActorEnableCollision(m_bIsActive);
 }
+
+void AAdamArrow::OnActivated(const FVector& ShootDir)
+{
+	ShootInDirection(ShootDir);
+	Bow_ArrowMesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f)); // 메쉬 방향
+	Movement->SetUpdatedComponent(ArrowColBox);
+	Movement->SetComponentTickEnabled(true);
+	Movement->UpdateComponentVelocity();
+	Movement->Activate();
+}
+
+
+
+void AAdamArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *Hit.Actor->GetName());
+
+	GetWorldTimerManager().SetTimer(ArrowTimerHandle, this, &AAdamArrow::ReturnSelf, 1.0f, false, 3.0f);
+	FDamageEvent DamageEvent;
+	// 여기서 OtherActor는 ProjectileArrow와 충돌한 객체, 즉 몬스터 객체이다
+	float fDamage = OtherActor->TakeDamage(30.f, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+
+}
+
 

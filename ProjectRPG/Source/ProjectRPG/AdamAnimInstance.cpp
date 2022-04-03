@@ -14,6 +14,7 @@ UAdamAnimInstance::UAdamAnimInstance()
 	bIsDead = false;
 	bUsingShield = false;
 	bAimingArrow = false;
+	bIsChangingWeapon = false;
 	// ·£´ý Á×À½ ¾Ö´Ï¸ÞÀÌ¼Ç ÀÎµ¦½º ¼¼ÆÃ
 	RandDeathAnimIdx = FMath::RandRange(0, 1);
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> SWORDATTACK_MTG(TEXT("/Game/PalaceWorld/Blueprints/Animations/AdamSwordComboMTG.AdamSwordComboMTG"));
@@ -64,11 +65,21 @@ void UAdamAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 }
 
-void UAdamAnimInstance::PlayAttackMontage()
+void UAdamAnimInstance::PlayAttackMontage(EWeaponType curWeapon)
 {
-	if(!bIsDead)
+	if (bIsDead)
+		return;
+	if (curWeapon == EWeaponType::E_SWORDSHIELD)
+	{
 		Montage_Play(AttackMontage, 1.0f);
+	}
+	else if (curWeapon == EWeaponType::E_BOW)
+	{
+		Montage_Play(BowAttackMontage, 1.0f);
+	}
+	
 }
+
 
 void UAdamAnimInstance::PlayChangeWeaponMontage(EWeaponType nextWeapon)
 {
@@ -101,6 +112,16 @@ void UAdamAnimInstance::AnimNotify_TookOutSword()
 void UAdamAnimInstance::AnimNotify_TookOutBow()
 {
 	OnBowTookOutCheck.Broadcast();
+}
+
+void UAdamAnimInstance::AnimNotify_PickArrow()
+{
+	OnBowPickArrowCheck.Broadcast();
+}
+
+void UAdamAnimInstance::AnimNotify_ShootArrow()
+{
+	OnBowShootArrowCheck.Broadcast();
 }
 
 void UAdamAnimInstance::AnimNotify_AttackHitCheck()

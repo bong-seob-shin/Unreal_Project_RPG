@@ -47,8 +47,8 @@ AAdamCharacter::AAdamCharacter()
 
 	// 무기 타입 디폴트 : 칼,방패
 	CurWeaponType = EWeaponType::E_SWORDSHIELD;
+	bIsAttacking = false; // 무기 공통 공격중인지 변수
 	// 칼 공격 변수들
-	bIsAttacking = false;
 	MaxCombo = 5; 
 	AttackRange = 200.0f;
 	AttackRadius = 50.0f;
@@ -56,7 +56,7 @@ AAdamCharacter::AAdamCharacter()
 	AttackEndComboState();
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("AdamCharacter"));
-	
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_ADAM(TEXT("/Game/PalaceWorld/Resources/Adam_Adventurer/Meshes/Character/SK_AdamAdventurer.SK_AdamAdventurer"));
 	if (SK_ADAM.Succeeded())
@@ -154,8 +154,8 @@ void AAdamCharacter::BeginPlay()
 
 	// 화살 오브젝트 풀 초기화
 	ArrowPool = CastChecked<APalaceGameMode>(GetWorld()->GetAuthGameMode())->GetObjectPool();
-	Bow_Arrow = ArrowPool->GetPooledObject();
-	Bow_Arrow->SetObjectPool(ArrowPool);
+	//Bow_Arrow = ArrowPool->GetPooledObject();
+	//Bow_Arrow->SetObjectPool(ArrowPool);
 	
 	//if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
 		// 무기 소켓에 무기 장착
@@ -210,6 +210,7 @@ void AAdamCharacter::PostInitializeComponents()
 		{
 			AttackStartComboState();
 			AdamAnim->JumpToAttackMontageSection(CurrentCombo);
+
 		}
 	});
 
@@ -220,6 +221,10 @@ void AAdamCharacter::PostInitializeComponents()
 	AdamAnim->OnSwordTookOutCheck.AddUObject(this, &AAdamCharacter::SwordTookOutCheck);
 	AdamAnim->OnBowTookOutCheck.AddUObject(this, &AAdamCharacter::BowTookOutCheck);
 	
+	// 활 기본공격 델리게이트
+	AdamAnim->OnBowPickArrowCheck.AddUObject(this, &AAdamCharacter::BowAttackPickArrowCheck);
+	AdamAnim->OnBowShootArrowCheck.AddUObject(this, &AAdamCharacter::BowAttackShootArrowCheck);
+
 
 }
 void AAdamCharacter::PossessedBy(AController* NewController)
@@ -277,28 +282,20 @@ void AAdamCharacter::Attack()
 		{
 			if (CurrentCombo == 0) {
 				AttackStartComboState();
-				AdamAnim->PlayAttackMontage();
+				AdamAnim->PlayAttackMontage(CurWeaponType);
 				AdamAnim->JumpToAttackMontageSection(CurrentCombo);
 				bIsAttacking = true;
 			}
 		}
 		break;
 	case EWeaponType::E_BOW:
-		UWorld* const World = GetWorld();
-		if (World != NULL)
+		if (!bIsAttacking) 
 		{
-			FName ArrowSocket(TEXT("ArrowSocket")); // 화살 소켓
-			if (nullptr != ArrowPool) {
-				if (GetMesh()->DoesSocketExist(ArrowSocket))
-				{
-					
-					Bow_Arrow->SetActive(true);
-					Bow_Arrow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ArrowSocket);
-					
-					
-				}
-			}
-
+			bIsAttacking = true;
+			Bow_Arrow = ArrowPool->GetPooledObject();
+			UE_LOG(PalaceWorld, Warning, TEXT("bIsAttacking is %d"), bIsAttacking);
+			//Bow_Arrow->SetObjectPool(ArrowPool);
+			AdamAnim->PlayAttackMontage(CurWeaponType);
 		}
 		break;
 	}
@@ -362,6 +359,7 @@ void AAdamCharacter::SwordAndShieldMode()
 	if (CurWeaponType == EWeaponType::E_SWORDSHIELD)
 		return;
 	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_SWORDSHIELD);
+	AdamAnim->SetChangingWeapon(true);
 	CurWeaponType = EWeaponType::E_SWORDSHIELD;
 }
 
@@ -370,6 +368,8 @@ void AAdamCharacter::BowMode()
 	if (CurWeaponType == EWeaponType::E_BOW)
 		return;
 	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_BOW);
+	AdamAnim->SetChangingWeapon(true);
+	UE_LOG(PalaceWorld, Warning, TEXT("bIsChangingWeapon = %d"), AdamAnim->GetbIsChangingWeapon());
 	CurWeaponType = EWeaponType::E_BOW;
 }
 
@@ -388,10 +388,20 @@ void AAdamCharacter::BowMode()
 void AAdamCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (bIsAttacking) {
-		if (CurrentCombo > 0) {
-			bIsAttacking = false;
-			AttackEndComboState();
+		if (CurWeaponType == EWeaponType::E_SWORDSHIELD) {
+			if (CurrentCombo > 0) {
+				bIsAttacking = false;
+				AttackEndComboState();
+			}
 		}
+		else if (CurWeaponType == EWeaponType::E_BOW)
+		{
+			bIsAttacking = false;
+		}
+	}
+	if (AdamAnim->GetbIsChangingWeapon())
+	{
+		AdamAnim->SetChangingWeapon(false);
 	}
 	
 }
@@ -476,4 +486,26 @@ void AAdamCharacter::AttackCheck()
 		}
 	}
 
+}
+
+void AAdamCharacter::BowAttackPickArrowCheck()
+{
+	FName ArrowSocket(TEXT("ArrowSocket")); // 화살 소켓
+	if (nullptr != ArrowPool) {
+		if (GetMesh()->DoesSocketExist(ArrowSocket))
+		{
+			Bow_Arrow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, ArrowSocket);	
+			Bow_Arrow->SetActive(true);
+		}
+	}
+
+	
+}
+
+void AAdamCharacter::BowAttackShootArrowCheck()
+{
+	Bow_Arrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	FVector LaunchDir = GetCapsuleComponent()->GetForwardVector();
+	Bow_Arrow->OnActivated(LaunchDir);
+	UE_LOG(PalaceWorld, Warning, TEXT("%s is On Activated"), *Bow_Arrow->GetName());
 }
