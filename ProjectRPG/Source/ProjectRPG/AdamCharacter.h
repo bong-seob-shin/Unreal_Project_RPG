@@ -33,6 +33,10 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	// 캐릭터 스탯
+	UPROPERTY(VisibleAnywhere, Category = Stat)
+	class UAdamCharacterStatComponent* CharacterStat;
+
 	// 등 뒤 무기 스태틱메쉬들
 	UPROPERTY(VisibleAnywhere, Category = Weapon_Back)
 	UStaticMeshComponent* Bow;

@@ -4,6 +4,7 @@
 #include "AdamCharacter.h"
 #include "AdamAnimInstance.h"
 #include "AdamPlayerController.h"
+#include "AdamCharacterStatComponent.h"
 #include "AdamWeaponSword.h"
 #include "AdamWeaponShield.h"
 #include "AdamWeaponBow.h"
@@ -23,6 +24,7 @@ AAdamCharacter::AAdamCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	CharacterStat = CreateDefaultSubobject<UAdamCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
