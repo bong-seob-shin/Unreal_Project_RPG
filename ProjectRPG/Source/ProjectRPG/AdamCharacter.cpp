@@ -216,6 +216,12 @@ void AAdamCharacter::PostInitializeComponents()
 		}
 	});
 
+	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
+		UE_LOG(PalaceWorld, Warning, TEXT("OnHPIsZero"));
+		AdamAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+		});
+
 	// 칼 공격 충돌 처리 델리게이트
 	AdamAnim->OnAttackHitCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
 
@@ -238,11 +244,12 @@ float AAdamCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(PalaceWorld, Warning, TEXT("Actor: %s / Took Dmg: %f"), *GetName(), FinalDamage);
-	if (FinalDamage > 0.0f) // 여기에 나중에 hp 코드 넣을 예정
-	{
-		AdamAnim->SetDeadAnim();
-		SetActorEnableCollision(false);
-	}
+	//if (FinalDamage > 0.0f) // 여기에 나중에 hp 코드 넣을 예정
+	//{
+	//	AdamAnim->SetDeadAnim();
+	//	SetActorEnableCollision(false);
+	//}
+	CharacterStat->SetDamage(FinalDamage);
 	return FinalDamage;
 }
 
@@ -484,7 +491,7 @@ void AAdamCharacter::AttackCheck()
 			UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 
 			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(50.0f, DamageEvent, GetController(), this); // 전달할 데미디 세기, 데미지 종류, 공격 명령 내린 가해자(컨트롤러), 데미지 전달 위해 사용한 도구(폰)
+			HitResult.Actor->TakeDamage(CharacterStat->GetAttack()/*나중에 몬스터 데미지로 수정해야됨*/, DamageEvent, GetController(), this); // 전달할 데미디 세기, 데미지 종류, 공격 명령 내린 가해자(컨트롤러), 데미지 전달 위해 사용한 도구(폰)
 		}
 	}
 

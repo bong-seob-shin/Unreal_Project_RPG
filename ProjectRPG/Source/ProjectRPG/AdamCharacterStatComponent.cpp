@@ -2,8 +2,8 @@
 
 
 #include "AdamCharacterStatComponent.h"
-#include "PalaceGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "PalaceGameInstance.h"
 
 // Sets default values
 UAdamCharacterStatComponent::UAdamCharacterStatComponent()
@@ -45,6 +45,25 @@ void UAdamCharacterStatComponent::SetNewLevel(int32 NewLevel)
 			UE_LOG(PalaceWorld,Error, TEXT("Level (%d) data doesn't exist"), NewLevel);
 		}
 	}
+}
+
+void UAdamCharacterStatComponent::SetDamage(float NewDamage)
+{
+	if (nullptr != CurrentStatData)
+	{
+		CurrentHP = FMath::Clamp<float>(CurrentHP - NewDamage, 0.0f, CurrentStatData->MaxHP);
+		if (CurrentHP <= 0.0f)
+		{
+			OnHPIsZero.Broadcast();
+		}
+	}
+}
+
+float UAdamCharacterStatComponent::GetAttack()
+{
+	if(nullptr == CurrentStatData)
+		return 0.0f;
+	return CurrentStatData->Attack;
 }
 
 
