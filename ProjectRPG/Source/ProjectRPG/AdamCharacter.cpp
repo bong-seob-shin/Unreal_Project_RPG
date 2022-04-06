@@ -16,6 +16,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/WidgetComponent.h"
+#include "AdamCharacterWidget.h"
 
 // Sets default values
 AAdamCharacter::AAdamCharacter()
@@ -25,9 +27,11 @@ AAdamCharacter::AAdamCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	CharacterStat = CreateDefaultSubobject<UAdamCharacterStatComponent>(TEXT("CHARACTERSTAT"));
+	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
+	HPBarWidget->SetupAttachment(GetMesh());
 
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -95.0f), FRotator(0.0f, -90.0f, 0.0f));
 	SpringArm->TargetArmLength = 600.0f;
@@ -46,6 +50,15 @@ AAdamCharacter::AAdamCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = fWalkSpeed;
 	GetCharacterMovement()->BrakingDecelerationWalking = fDeceleration;
 
+	// 체력바 UI
+	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 230.0f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("/Game/PalaceWorld/Blueprints/UI/UI_HPBar.UI_HPBar_C"));
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
+	}
 
 	// 무기 타입 디폴트 : 칼,방패
 	CurWeaponType = EWeaponType::E_SWORDSHIELD;
@@ -186,6 +199,13 @@ void AAdamCharacter::BeginPlay()
 				Weapon_Bow->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, BowSocket); // Default Visibility = false
 			}
 		}
+
+		// 캐릭터 HPBar widget 초기화
+		auto CharacterWidget = Cast<UAdamCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+		if (nullptr != CharacterWidget)
+		{
+			CharacterWidget->BindCharacterStat(CharacterStat);
+		}
 }
 
 // Called every frame
@@ -216,11 +236,14 @@ void AAdamCharacter::PostInitializeComponents()
 		}
 	});
 
+	// 캐릭터 hp-데미지 처리를 캐릭터 스탯 액터 컴포넌트에서 하도록 바인딩
 	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
 		UE_LOG(PalaceWorld, Warning, TEXT("OnHPIsZero"));
 		AdamAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 		});
+	
+	
 
 	// 칼 공격 충돌 처리 델리게이트
 	AdamAnim->OnAttackHitCheck.AddUObject(this, &AAdamCharacter::AttackCheck);
@@ -378,7 +401,7 @@ void AAdamCharacter::BowMode()
 		return;
 	AdamAnim->PlayChangeWeaponMontage(EWeaponType::E_BOW);
 	AdamAnim->SetChangingWeapon(true);
-	UE_LOG(PalaceWorld, Warning, TEXT("bIsChangingWeapon = %d"), AdamAnim->GetbIsChangingWeapon());
+	//UE_LOG(PalaceWorld, Warning, TEXT("bIsChangingWeapon = %d"), AdamAnim->GetbIsChangingWeapon());
 	CurWeaponType = EWeaponType::E_BOW;
 }
 

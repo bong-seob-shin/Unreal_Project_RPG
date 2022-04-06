@@ -71,6 +71,10 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* HPBarWidget;
+
+
 	// 상하좌우 이동
 	void MoveFB(float NewAxisValue);
 	void MoveLR(float NewAxisValue);

@@ -7,6 +7,7 @@
 #include "AdamCharacterStatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHPIsZeroDelgate);
+DECLARE_MULTICAST_DELEGATE(FOnHPChangeDelgate);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class PROJECTRPG_API UAdamCharacterStatComponent : public UActorComponent
@@ -25,9 +26,12 @@ protected:
 public:
 	void SetNewLevel(int32 NewLevel);
 	void SetDamage(float NewDamage);
+	void SetHP(float NewHP);
 	float GetAttack();
+	float GetHPRatio();
 
 	FOnHPIsZeroDelgate OnHPIsZero;
+	FOnHPChangeDelgate OnHPChanged;
 private:
 	struct FAdamCharacterData* CurrentStatData = nullptr;
 
