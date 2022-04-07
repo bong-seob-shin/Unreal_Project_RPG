@@ -49,7 +49,7 @@ void UAdamAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	auto Pawn = TryGetPawnOwner();
-	if (!::IsValid(Pawn))
+	if (::IsValid(Pawn))
 		return;
 
 	if (!bIsDead)

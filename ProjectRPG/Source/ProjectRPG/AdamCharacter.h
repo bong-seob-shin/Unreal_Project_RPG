@@ -62,8 +62,8 @@ public:
 	// 화살 액터
 	class AAdamArrow* Bow_Arrow;
 	
-	UPROPERTY(EditDefaultsOnly, Category = Arrow)
-	TSubclassOf<class AAdamArrow> ArrowClass; // 스폰할때 쓸 화살 클래스
+	/*UPROPERTY(EditDefaultsOnly, Category = Arrow)
+	TSubclassOf<class AAdamArrow> ArrowClass;*/ // 스폰할때 쓸 화살 클래스
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* SpringArm;
