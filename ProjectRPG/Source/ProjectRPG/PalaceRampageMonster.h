@@ -25,11 +25,23 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void PostInitializeComponents() override;
 	// Ä³¸¯ÅÍ ½ºÅÈ
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 	class UAdamCharacterStatComponent* CharacterStat;
 
 	UPROPERTY(VisibleAnywhere, Category = UI)
 	class UWidgetComponent* HPBarWidget;
+
+	void Attack();
+private:
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+private:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsAttacking;
+
+	UPROPERTY()
+	class URampageAnimInstance* RampageAnim;
+
 };

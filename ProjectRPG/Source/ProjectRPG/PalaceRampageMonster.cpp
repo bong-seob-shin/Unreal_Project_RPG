@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "AdamCharacterWidget.h"
+#include "RampageAnimInstance.h"
 
 // Sets default values
 APalaceRampageMonster::APalaceRampageMonster()
@@ -66,5 +67,33 @@ void APalaceRampageMonster::SetupPlayerInputComponent(UInputComponent* PlayerInp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void APalaceRampageMonster::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	RampageAnim = Cast<URampageAnimInstance>(GetMesh()->GetAnimInstance());
+	if (nullptr == RampageAnim)
+	{
+		UE_LOG(PalaceWorld, Error, TEXT("Animinstance Nullptr"));
+		return;
+	}
+	RampageAnim->OnMontageEnded.AddDynamic(this, &APalaceRampageMonster::OnAttackMontageEnded);
+}
+
+void APalaceRampageMonster::Attack()
+{
+	if (!bIsAttacking)
+	{
+		RampageAnim->PlayRandAttackMontage();
+		bIsAttacking = true;
+		
+	}
+}
+
+void APalaceRampageMonster::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	bIsAttacking = false;
+	RampageAnim->SetRandAtkAnimIdx();
 }
 

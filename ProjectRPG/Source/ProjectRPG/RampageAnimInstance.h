@@ -6,6 +6,9 @@
 #include "Animation/AnimInstance.h"
 #include "RampageAnimInstance.generated.h"
 
+
+
+
 /**
  * 
  */
@@ -17,7 +20,9 @@ class PROJECTRPG_API URampageAnimInstance : public UAnimInstance
 public:
 	URampageAnimInstance();
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override; // tick
-
+public:
+	void PlayRandAttackMontage(); // 공격 몽타주 재생
+	void SetRandAtkAnimIdx() { RandAtkAnimIdx = FMath::RandRange(0, 2); }
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentPawnSpeed;
@@ -27,4 +32,15 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool bIsDead;  // 죽는 애니메이션 재생 위한 변수
+	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	int32 RandAtkAnimIdx; // 랜덤 공격 애니메이션 위한 인덱스
+
+	// Montages
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
+	UAnimMontage* AttackMontage_1;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
+	UAnimMontage* AttackMontage_2;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true)) // DefaultsOnly : 블루프린트 편집 화면에서만 보여짐
+	UAnimMontage* AttackMontage_3;
 };
