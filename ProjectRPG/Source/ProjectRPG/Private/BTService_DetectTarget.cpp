@@ -11,7 +11,7 @@ UBTService_DetectTarget::UBTService_DetectTarget()
 {
 	NodeName = TEXT("DetectTarget");
 	Interval = 1.0f;
-	DetectRadius = 600.0f;
+	DetectRadius = 1000.0f;
 }
 
 void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -48,11 +48,11 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 			if (Character != nullptr && Character->GetController()->IsPlayerController() &&!Character->GetIsHiding()) //this CrossCheck increase accuracy
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AGruxAIController::TargetKey, Character);
-				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 
-				DrawDebugPoint(World, Character->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
+				//DrawDebugPoint(World, Character->GetActorLocation(), 10.0f, FColor::Blue, false, 0.2f);
 
-				DrawDebugLine(World, ControllingPawn->GetActorLocation(),Character->GetActorLocation(), FColor::Blue, false, 0.2f);
+				//DrawDebugLine(World, ControllingPawn->GetActorLocation(),Character->GetActorLocation(), FColor::Blue, false, 0.2f);
 				
 				return;
 			}
@@ -60,6 +60,6 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	}
 	OwnerComp.GetBlackboardComponent()->SetValueAsObject(AGruxAIController::TargetKey, nullptr);
 
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 }
 
