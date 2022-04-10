@@ -7,21 +7,28 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "AdamCharacterWidget.h"
+#include "AdamCharacterStatComponent.h"
 #include "RampageAnimInstance.h"
+#include "MonsterAIController.h"
 
 // Sets default values
 APalaceRampageMonster::APalaceRampageMonster()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bIsAttacking = false;
 	CharacterStat = CreateDefaultSubobject<UAdamCharacterStatComponent>(TEXT("CHARACTERSTAT"));
 	HPBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBARWIDGET"));
 	
 	HPBarWidget->SetupAttachment(GetMesh());
 
 	// 메쉬 방향
-	//GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -95.0f), FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -80.0f), FRotator(0.0f, -90.0f, 0.0f));
+	GetCapsuleComponent()->SetCapsuleHalfHeight(100.0f,false);
+	GetCapsuleComponent()->SetCapsuleRadius(60.0f);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SK_RAMPAGE(TEXT("/Game/PalaceWorld/Resources/ParagonRampage/Characters/Heroes/Rampage/Meshes/Rampage.Rampage"));
 	if (SK_RAMPAGE.Succeeded())
@@ -35,6 +42,11 @@ APalaceRampageMonster::APalaceRampageMonster()
 	{
 		GetMesh()->SetAnimInstanceClass(RAMPAGE_ANIM.Class);
 	}
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 480.0f, 0.0f);
+	GetCharacterMovement()->MaxWalkSpeed = 300.0f;
 
 	// 체력바 UI
 	HPBarWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 230.0f));
@@ -45,14 +57,21 @@ APalaceRampageMonster::APalaceRampageMonster()
 		HPBarWidget->SetWidgetClass(UI_HUD.Class);
 		HPBarWidget->SetDrawSize(FVector2D(150.0f, 50.0f));
 	}
-
+	
+	AIControllerClass = AMonsterAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned
 void APalaceRampageMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	// 캐릭터 HPBar widget 초기화
+	auto CharacterWidget = Cast<UAdamCharacterWidget>(HPBarWidget->GetUserWidgetObject());
+	if (nullptr != CharacterWidget)
+	{
+		CharacterWidget->BindCharacterStat(CharacterStat);
+	}
 }
 
 // Called every frame
@@ -79,6 +98,21 @@ void APalaceRampageMonster::PostInitializeComponents()
 		return;
 	}
 	RampageAnim->OnMontageEnded.AddDynamic(this, &APalaceRampageMonster::OnAttackMontageEnded);
+	// 공격 충돌 처리 델리게이트
+	RampageAnim->OnAttackHitCheck.AddUObject(this, &APalaceRampageMonster::AttackCheck);
+
+	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
+		RampageAnim->SetDeadAnim();
+		SetActorEnableCollision(false);
+		});
+}
+
+float APalaceRampageMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	CharacterStat->SetDamage(FinalDamage);
+	return FinalDamage;
 }
 
 void APalaceRampageMonster::Attack()
@@ -86,14 +120,60 @@ void APalaceRampageMonster::Attack()
 	if (!bIsAttacking)
 	{
 		RampageAnim->PlayRandAttackMontage();
-		bIsAttacking = true;
-		
+		bIsAttacking = true;	
 	}
+}
+
+void APalaceRampageMonster::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * 200.0f, //탐색 끝낼 위치: 액터 시선방향으로 200cm 떨어진 곳
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(50.0f), // 탐지에 사용할 도형 : 반지름 50cm 구
+		Params);
+
+	// 콜리젼 디버그 드로잉
+//#if ENABLE_DRAW_DEBUG
+//	FVector TraceVec = GetActorForwardVector() * AttackRange;
+//	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+//	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+//	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+//	FColor DrawColor = bResult ? FColor::Green : FColor::Red; // 공격 판정이 발생하면 녹색, 아니면 빨간색
+//	float DebugLifeTime = 5.0f;
+//	DrawDebugCapsule(GetWorld(),
+//		Center,
+//		HalfHeight,
+//		AttackRadius,
+//		CapsuleRot,
+//		DrawColor,
+//		false,
+//		DebugLifeTime);
+//#endif
+
+	if (bResult)
+	{
+		if (HitResult.Actor.IsValid())
+		{
+			UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
+
+			FDamageEvent DamageEvent;
+			HitResult.Actor->TakeDamage(CharacterStat->GetAttack()/*나중에 몬스터 데미지로 수정해야됨*/, DamageEvent, GetController(), this); // 전달할 데미디 세기, 데미지 종류, 공격 명령 내린 가해자(컨트롤러), 데미지 전달 위해 사용한 도구(폰)
+		}
+	}
+
 }
 
 void APalaceRampageMonster::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	bIsAttacking = false;
-	RampageAnim->SetRandAtkAnimIdx();
+	if (bIsAttacking) {
+		bIsAttacking = false;
+		RampageAnim->SetRandAtkAnimIdx();
+		OnAttackEnd.Broadcast();
+	}
 }
 

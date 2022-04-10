@@ -267,11 +267,7 @@ float AAdamCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(PalaceWorld, Warning, TEXT("Actor: %s / Took Dmg: %f"), *GetName(), FinalDamage);
-	//if (FinalDamage > 0.0f) // 여기에 나중에 hp 코드 넣을 예정
-	//{
-	//	AdamAnim->SetDeadAnim();
-	//	SetActorEnableCollision(false);
-	//}
+	
 	CharacterStat->SetDamage(FinalDamage);
 	return FinalDamage;
 }

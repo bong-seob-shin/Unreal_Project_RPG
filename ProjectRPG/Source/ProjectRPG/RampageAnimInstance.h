@@ -7,7 +7,7 @@
 #include "RampageAnimInstance.generated.h"
 
 
-
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 
 /**
  * 
@@ -23,7 +23,14 @@ public:
 public:
 	void PlayRandAttackMontage(); // 공격 몽타주 재생
 	void SetRandAtkAnimIdx() { RandAtkAnimIdx = FMath::RandRange(0, 2); }
+	void SetDeadAnim() { bIsDead = true; }
+public:
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	
 private:
+	UFUNCTION()
+	void AnimNotify_AttackHitCheck();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float CurrentPawnSpeed;
 

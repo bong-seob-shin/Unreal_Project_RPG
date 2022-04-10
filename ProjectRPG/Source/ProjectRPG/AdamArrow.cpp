@@ -38,6 +38,8 @@ AAdamArrow::AAdamArrow()
 	//Movement->bInitialVelocityInLocalSpace = true;
 	Movement->ProjectileGravityScale = 0.5f;
 	Movement->bAutoActivate = false;
+
+	returnInterval = 3.0f;
 }
 
 // Called when the game starts or when spawned
@@ -98,11 +100,11 @@ void AAdamArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UP
 {
 	UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *Hit.Actor->GetName());
 
-	GetWorldTimerManager().SetTimer(ArrowTimerHandle, this, &AAdamArrow::ReturnSelf, 1.0f, false, 3.0f);
+	GetWorldTimerManager().SetTimer(ArrowTimerHandle, this, &AAdamArrow::ReturnSelf, 1.0f, false, returnInterval);
 	FDamageEvent DamageEvent;
 	// 여기서 OtherActor는 ProjectileArrow와 충돌한 객체, 즉 몬스터 객체이다
-	float fDamage = OtherActor->TakeDamage(30.f, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
-
+	float fDamage = OtherActor->TakeDamage(30.f/*나중에 캐릭터 스탯에서 받아오는 처리 필요*/, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+	
 }
 
 

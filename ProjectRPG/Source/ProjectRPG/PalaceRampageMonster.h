@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "PalaceRampageMonster.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackEndDelegate); // 공격 태스크에서 몬스터 공격 종료되면 알림 받을 수 있도록 델리게이트
+
 UCLASS()
 class PROJECTRPG_API APalaceRampageMonster : public ACharacter
 {
@@ -26,6 +28,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 	// 캐릭터 스탯
 	UPROPERTY(VisibleAnywhere, Category = Stat)
 	class UAdamCharacterStatComponent* CharacterStat;
@@ -34,6 +38,9 @@ public:
 	class UWidgetComponent* HPBarWidget;
 
 	void Attack();
+	FOnAttackEndDelegate OnAttackEnd;
+	void AttackCheck();
+
 private:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);

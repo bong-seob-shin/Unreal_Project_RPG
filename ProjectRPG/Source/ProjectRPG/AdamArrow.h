@@ -51,4 +51,5 @@ private:
 	bool m_bIsActive; // 해당 오브젝트의 활성화 여부
 	class AAdamObjectPool* m_ObjectPool; // 해당 오브젝트 관리하는 오브젝트 풀의 레퍼런스
 	FTimerHandle ArrowTimerHandle; // 충돌 후 오브젝트 풀에 반환 위한 타이머 핸들
+	float returnInterval; // 객체가 충돌하고 오브젝트 풀에 반환될때 까지 시간
 };
