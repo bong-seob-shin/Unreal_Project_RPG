@@ -5,6 +5,9 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "AdamObjectPool.h"
+#include "Kismet/GameplayStatics.h"
+
+float AAdamArrow::DmgByPlayerLv = 0.0f;
 
 // Sets default values
 AAdamArrow::AAdamArrow()
@@ -100,11 +103,16 @@ void AAdamArrow::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UP
 {
 	UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *Hit.Actor->GetName());
 
+	SetActorEnableCollision(false);
 	GetWorldTimerManager().SetTimer(ArrowTimerHandle, this, &AAdamArrow::ReturnSelf, 1.0f, false, returnInterval);
-	FDamageEvent DamageEvent;
-	// 여기서 OtherActor는 ProjectileArrow와 충돌한 객체, 즉 몬스터 객체이다
-	float fDamage = OtherActor->TakeDamage(30.f/*나중에 캐릭터 스탯에서 받아오는 처리 필요*/, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
-	
+	if (Hit.Actor.IsValid())
+	{
+		FDamageEvent DamageEvent;
+		// 여기서 OtherActor는 ProjectileArrow와 충돌한 객체, 즉 몬스터 객체이다
+		float fDamage = OtherActor->TakeDamage(DmgByPlayerLv/*나중에 캐릭터 스탯에서 받아오는 처리 필요*/, DamageEvent, GetWorld()->GetFirstPlayerController(), this);
+		//UGameplayStatics::ApplyDamage(OtherActor, DmgByPlayerLv, NULL, GetOwner(), NULL);
+		//AttachToActor(OtherActor, FAttachmentTransformRules::KeepWorldTransform);
+	}
 }
 
 

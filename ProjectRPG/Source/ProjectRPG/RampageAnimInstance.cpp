@@ -46,12 +46,12 @@ void URampageAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void URampageAnimInstance::PlayRandAttackMontage()
 {
-	/*UE_LOG(PalaceWorld, Warning, TEXT("Mon anim:%d"), RandAtkAnimIdx);
+	UE_LOG(PalaceWorld, Warning, TEXT("Mon anim:%d"), RandAtkAnimIdx);
 	switch (RandAtkAnimIdx)
 	{
-	case 0:*/
+	case 0:
 		Montage_Play(AttackMontage_1, 1.0f);
-		/*break;
+		break;
 	case 1:
 		Montage_Play(AttackMontage_2, 1.0f);
 		break;
@@ -60,7 +60,7 @@ void URampageAnimInstance::PlayRandAttackMontage()
 		break;
 	default:
 		break;
-	}*/
+	}
 }
 
 void URampageAnimInstance::AnimNotify_AttackHitCheck()

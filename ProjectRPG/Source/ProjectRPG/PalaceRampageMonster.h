@@ -40,7 +40,7 @@ public:
 	void Attack();
 	FOnAttackEndDelegate OnAttackEnd;
 	void AttackCheck();
-
+	void Die();
 private:
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
@@ -51,4 +51,6 @@ private:
 	UPROPERTY()
 	class URampageAnimInstance* RampageAnim;
 
+	FTimerHandle destroyTimerHandle; // 객체 소멸 위한 타이머 핸들
+	float destroyInterval; // 객체 소멸될 때 까지 시간
 };

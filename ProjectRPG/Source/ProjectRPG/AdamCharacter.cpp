@@ -19,6 +19,12 @@
 #include "Components/WidgetComponent.h"
 #include "AdamCharacterWidget.h"
 
+
+// 캐릭터 무브먼트 관련 기본값들
+constexpr float fWalkSpeed = 300.f;
+constexpr float fAcceleration = 2048.f;
+constexpr float fDeceleration = 521.f;
+
 // Sets default values
 AAdamCharacter::AAdamCharacter()
 {
@@ -67,6 +73,7 @@ AAdamCharacter::AAdamCharacter()
 	MaxCombo = 5; 
 	AttackRange = 200.0f;
 	AttackRadius = 50.0f;
+	bIsDead = false;
 
 	AttackEndComboState();
 
@@ -169,6 +176,7 @@ void AAdamCharacter::BeginPlay()
 
 	// 화살 오브젝트 풀 초기화
 	ArrowPool = CastChecked<APalaceGameMode>(GetWorld()->GetAuthGameMode())->GetObjectPool();
+	
 	//Bow_Arrow = ArrowPool->GetPooledObject();
 	//Bow_Arrow->SetObjectPool(ArrowPool);
 	
@@ -239,6 +247,8 @@ void AAdamCharacter::PostInitializeComponents()
 	// 캐릭터 hp-데미지 처리를 캐릭터 스탯 액터 컴포넌트에서 하도록 바인딩
 	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
 		UE_LOG(PalaceWorld, Warning, TEXT("OnHPIsZero"));
+		bIsDead = true;
+		GetController()->DisableInput(Cast<AAdamPlayerController>(GetController()));
 		AdamAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
 		});
@@ -266,7 +276,7 @@ void AAdamCharacter::PossessedBy(AController* NewController)
 float AAdamCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) //액터의 TakeDamage 오버라이드해 액터가 받은 데미지를 처리하는 로직
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	UE_LOG(PalaceWorld, Warning, TEXT("Actor: %s / Took Dmg: %f"), *GetName(), FinalDamage);
+	//UE_LOG(PalaceWorld, Warning, TEXT("Actor: %s / Took Dmg: %f"), *GetName(), FinalDamage);
 	
 	CharacterStat->SetDamage(FinalDamage);
 	return FinalDamage;
@@ -321,6 +331,8 @@ void AAdamCharacter::Attack()
 		{
 			bIsAttacking = true;
 			Bow_Arrow = ArrowPool->GetPooledObject();
+			if (0.0f == Bow_Arrow->getDamageByPlayerLevel())
+				Bow_Arrow->setDamageByPlayerLevel(CharacterStat->GetAttack());
 			UE_LOG(PalaceWorld, Warning, TEXT("bIsAttacking is %d"), bIsAttacking);
 			//Bow_Arrow->SetObjectPool(ArrowPool);
 			AdamAnim->PlayAttackMontage(CurWeaponType);
@@ -510,7 +522,7 @@ void AAdamCharacter::AttackCheck()
 			UE_LOG(PalaceWorld, Warning, TEXT("Hit Actor Name : %s"), *HitResult.Actor->GetName());
 
 			FDamageEvent DamageEvent;
-			HitResult.Actor->TakeDamage(CharacterStat->GetAttack()/*나중에 몬스터 데미지로 수정해야됨*/, DamageEvent, GetController(), this); // 전달할 데미디 세기, 데미지 종류, 공격 명령 내린 가해자(컨트롤러), 데미지 전달 위해 사용한 도구(폰)
+			HitResult.Actor->TakeDamage(CharacterStat->GetAttack()/*나중에 몬스터 데미지로 수정해야됨*/, DamageEvent, GetController(), this); // 전달할 데미지 세기, 데미지 종류, 공격 명령 내린 가해자(컨트롤러), 데미지 전달 위해 사용한 도구(폰)
 		}
 	}
 

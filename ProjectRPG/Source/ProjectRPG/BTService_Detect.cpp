@@ -22,7 +22,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		return;
 	UWorld* World = ControllingPawn->GetWorld();
 	FVector Center = ControllingPawn->GetActorLocation();
-	float DetectRadius = 600.0f;
+	float DetectRadius = 700.0f;
 
 	if (nullptr == World)
 		return;
@@ -42,13 +42,14 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMonsterAIController::TargetKey, nullptr);
 			AAdamCharacter* AdamCharacter = Cast<AAdamCharacter>(OverlapResult.GetActor());
-			if (AdamCharacter && AdamCharacter->GetController()->IsPlayerController())
+			if (AdamCharacter->GetIsDead())
+				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMonsterAIController::TargetKey, nullptr);
+			else if (AdamCharacter && AdamCharacter->GetController()->IsPlayerController())
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(AMonsterAIController::TargetKey, AdamCharacter);
-				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
-				
+				//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 			}
 		}
 	}
-	DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+	//DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 }

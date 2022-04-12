@@ -88,6 +88,9 @@ public:
 	void SwordAndShieldMode();
 	void BowMode();
 
+	// getter
+	FORCEINLINE bool GetIsDead() { return bIsDead; };
+
 private:
 	//void LoadStaticMeshInConstructor(UStaticMeshComponent* SMComponent,FName SocketName, FName ComponentName, UStaticMesh* mesh);
 
@@ -136,11 +139,10 @@ private:
 	UPROPERTY()
 	class UAdamAnimInstance* AdamAnim;
 	
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool bIsDead;
 
-	// 캐릭터 무브먼트 관련 기본값들
-	const float fWalkSpeed = 300.f;
-	const float fAcceleration = 2048.f;
-	const float fDeceleration = 521.f;
+	
 
 	
 };

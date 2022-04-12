@@ -5,13 +5,14 @@
 #include "AdamCharacterStatComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AdamCharacterWidget.h"
 #include "AdamCharacterStatComponent.h"
 #include "RampageAnimInstance.h"
 #include "MonsterAIController.h"
+
+
 
 // Sets default values
 APalaceRampageMonster::APalaceRampageMonster()
@@ -25,7 +26,8 @@ APalaceRampageMonster::APalaceRampageMonster()
 	HPBarWidget->SetupAttachment(GetMesh());
 
 	// 메쉬 방향
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -80.0f), FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -90.0f), FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 	GetCapsuleComponent()->SetCapsuleHalfHeight(100.0f,false);
 	GetCapsuleComponent()->SetCapsuleRadius(60.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
@@ -60,6 +62,8 @@ APalaceRampageMonster::APalaceRampageMonster()
 	
 	AIControllerClass = AMonsterAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	destroyInterval = 3.0f;
 }
 
 // Called when the game starts or when spawned
@@ -102,15 +106,20 @@ void APalaceRampageMonster::PostInitializeComponents()
 	RampageAnim->OnAttackHitCheck.AddUObject(this, &APalaceRampageMonster::AttackCheck);
 
 	CharacterStat->OnHPIsZero.AddLambda([this]()-> void {
-		RampageAnim->SetDeadAnim();
 		SetActorEnableCollision(false);
+		RampageAnim->SetDeadAnim();
+		auto MonsterAIController = Cast<AMonsterAIController>(GetController());
+		if (MonsterAIController != nullptr) // nullptr 체크 해야됨
+			MonsterAIController->OnUnPossess();
+		GetWorldTimerManager().SetTimer(destroyTimerHandle, this, &APalaceRampageMonster::Die, 1.0f, false, destroyInterval);
 		});
 }
 
 float APalaceRampageMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
+	UE_LOG(PalaceWorld, Warning, TEXT("Actor: %s / Took Dmg: %f"), *GetName(), FinalDamage);
+
 	CharacterStat->SetDamage(FinalDamage);
 	return FinalDamage;
 }
@@ -166,6 +175,11 @@ void APalaceRampageMonster::AttackCheck()
 		}
 	}
 
+}
+
+void APalaceRampageMonster::Die()
+{
+	Destroy();
 }
 
 void APalaceRampageMonster::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
