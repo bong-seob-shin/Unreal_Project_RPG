@@ -122,7 +122,6 @@ void AKallariController::Evade()
 		return;
 	Evade_CoolDown_Calc_Sec = GetWorld()->GetTimeSeconds();
 
-
 	if (bIsUsingSkill) return;
 	if (MyCharacter == nullptr) return;
 
